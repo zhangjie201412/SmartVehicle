@@ -1,5 +1,6 @@
 #include "..\App\includes.h"
 #include "stm32f10x.h"
+#include "wdg.h"
 
 #if 1
 #pragma import(__use_no_semihosting)
@@ -59,6 +60,7 @@ void BSP_Init(void)
     USART_Config(115200);
     /* NVIC configuration */
     NVIC_Configuration();
+    iwdg_init(IWDG_Prescaler_256, 0xfff);
 }
 
 /*******************************************************************************

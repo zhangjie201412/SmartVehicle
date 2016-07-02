@@ -12,7 +12,7 @@
 #include "cJSON.h"
 #include "flexcan.h"
 #include "data_type.h"
-#include "GE_COMMON.h"
+#include "wdg.h"
 
 OS_EVENT* atCmdMailbox;
 int isRunning = 0;
@@ -50,11 +50,6 @@ static  void App_TaskCreate(void);
 static  void App_TaskStart(void* p_arg);
 //process atcmd task
 static void task_process_atcmd(void *parg);
-
-#define BACKGROUND_TASK_STK_SIZE     256
-#define BACKGROUND_PRIO              8
-OS_STK backgroundTaskStk[BACKGROUND_TASK_STK_SIZE];
-static void thread_background_entry(void *parg);
 
 int main(void)
 {
@@ -115,6 +110,7 @@ static  void App_TaskStart(void* p_arg)
     while (1)
     {
         OSTimeDlyHMSM(0, 0, 5, 0);
+        iwdg_feed();
     }
 }
 
@@ -145,9 +141,6 @@ static  void App_TaskCreate(void)
             task_process_atcmd_stk_size,
             (void *)0,
             OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
-    OSTaskCreate(thread_background_entry, (void *)0,
-            &backgroundTaskStk[BACKGROUND_TASK_STK_SIZE - 1],
-            BACKGROUND_PRIO);
 }
 
 CanTxMsg keeplive =
@@ -173,30 +166,23 @@ int process(DataType *d, int ind, bool force)
     return 0;
 }
 
-void check_error_code(void)
+void recv_callback(uint8_t buf)
 {
-}
-
-//if engine module is off
-static void thread_background_entry(void *parg)
-{
-    (void)parg;
-
-    while(1) {
-    }
+    printk("%s: %s\r\n", __func__, buf);
 }
 
 static void task_process_atcmd(void *parg)
 {
     (void)parg;
 
+    printk("%s: Enter\r\n", __func__);
     flash_init();
-
     flexcan_init(CAN_500K);
     flexcan_filter(0x750, 0x750, 0x7ff, 0x7ff);
 
     sim900_init();
-    sim900_connect();
+//    sim900_connect();
+    sim900_register_recv(recv_callback);
 
     while(1) {
         OSTimeDlyHMSM(0, 0, 4, 0);

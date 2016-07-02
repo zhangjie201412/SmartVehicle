@@ -20,6 +20,11 @@ OS_EVENT *rx_semaphore;
 #define SIM900_RX_PRIO              5
 OS_STK recvTaskStk[RECEIVE_TASK_STK_SIZE];
 
+#define FAKE_TASK_STK_SIZE          512
+#define FAKE_TASK_PRIO              6
+OS_STK fakeTaskStk[FAKE_TASK_STK_SIZE];
+static void fake_thread(void *parg);
+
 #define BUF_LEN		128
 
 __IO char rx_buffer[BUF_LEN];
@@ -59,6 +64,14 @@ void sim900_poweron(void)
     GPIO_SetBits(GPIOB, GPIO_Pin_0);
     OSTimeDlyHMSM(0, 0, 4, 0);
     GPIO_ResetBits(GPIOB, GPIO_Pin_0);
+}
+
+static void fake_thread(void *parg)
+{
+    parg = parg;
+    while(1) {
+        OSTimeDlyHMSM(0, 0, 1, 0);
+    }
 }
 
 void sim900_init(void)
@@ -110,8 +123,12 @@ void sim900_init(void)
             &recvTaskStk[RECEIVE_TASK_STK_SIZE - 1],
             SIM900_RX_PRIO);
     status = STATUS_POWERON;
-    //get device id
-    sim900_get_device_id();
+
+    //fake thread to do some emulator
+    printk("create fake thread\r\n");
+    OSTaskCreate(fake_thread, (void *)0,
+            &fakeTaskStk[FAKE_TASK_STK_SIZE - 1],
+            FAKE_TASK_PRIO);
 }
 
 void send(uint8_t c)
@@ -155,12 +172,6 @@ int check_at(void)
         return 0;
     else
         return -1;
-}
-
-int sim900_get_device_id(void)
-{
-    flash_page_read(device_id, DEVICE_ID_ADDRESS, 17);
-    printk("\r\ndevice id: %s\r\n\r\n", device_id);
 }
 
 int check_connect(void)
@@ -232,9 +243,6 @@ void sim900_connect(void)
                 break;
             case STATUS_CONNECTING:
                 printk("wait for connecting...\r\n");
-
-                sim900_get_device_id();
-                printk("\r\ndevice id: %s\r\n\r\n", device_id);
                 sim900_write("AT+CIPSTATUS\r\n", 14);
                 OSTimeDlyHMSM(0, 0, 1, 0);
                 OSTimeDlyHMSM(0, 0, 2, 0);
@@ -263,12 +271,6 @@ void sim900_connect(void)
             case STATUS_CONNECTED:
                 printk("Connect done!\r\n");
                 clear_buf();
-                //setup heartbeat thread
-                if(!heartbeat_is_running) {
-                    OSTaskCreate(thread_heartbeat_entry, (void *)0,
-                            &heartbeatTaskStk[HEARTBEAT_TASK_STK_SIZE - 1],
-                            SIM900_HEARTBEAT_PRIO);
-                }
                 return;
             default:
                 break;

@@ -157,9 +157,6 @@ void SysTickHandler(void)
  * Output         : None
  * Return         : None
  *******************************************************************************/
-void WWDG_IRQHandler(void)
-{
-}
 
 /*******************************************************************************
  * Function Name  : PVD_IRQHandler
