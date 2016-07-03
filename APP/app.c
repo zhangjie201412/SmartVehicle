@@ -11,17 +11,11 @@
 #include "gps.h"
 #include "cJSON.h"
 #include "flexcan.h"
-#include "data_type.h"
 #include "wdg.h"
 
 OS_EVENT* atCmdMailbox;
 int isRunning = 0;
 uint8_t engineOn = 0;
-
-Result result[DATA_TYPE_END];
-Result result_code[ERROR_CODE_END];
-
-//uint8_t need_upload[20] = {0};
 
 /*
  *********************************************************************************************************
@@ -143,34 +137,6 @@ static  void App_TaskCreate(void)
             OS_TASK_OPT_STK_CHK | OS_TASK_OPT_STK_CLR);
 }
 
-CanTxMsg keeplive =
-{
-    0x750, 0x18db33f1,
-    CAN_ID_STD, CAN_RTR_DATA,
-    8,
-    0x40, 0x01, 0x3e, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
-CanTxMsg keeplive_door =
-{
-    0x750, 0x18db33f1,
-    CAN_ID_STD, CAN_RTR_DATA,
-    8,
-    0x90, 0x01, 0x3e, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-
-__IO bool is_processing = FALSE;
-
-int process(DataType *d, int ind, bool force)
-{
-    return 0;
-}
-
-void recv_callback(uint8_t buf)
-{
-    printk("%s: %s\r\n", __func__, buf);
-}
-
 static void task_process_atcmd(void *parg)
 {
     (void)parg;
@@ -180,10 +146,7 @@ static void task_process_atcmd(void *parg)
     flexcan_init(CAN_500K);
     flexcan_filter(0x750, 0x750, 0x7ff, 0x7ff);
 
-    sim900_init();
-//    sim900_connect();
-    sim900_register_recv(recv_callback);
-
+    pal_init();
     while(1) {
         OSTimeDlyHMSM(0, 0, 4, 0);
     }

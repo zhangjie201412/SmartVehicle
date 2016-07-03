@@ -54,6 +54,12 @@
 #define task_process_atcmd_prio			10
 //work process
 #define task_report_work_prio                11
+#define SIM900_RX_PRIO              5
+#define FAKE_TASK_PRIO              6
+#define TRANSMIT_TASK_PRIO              7
+#define HEARTBEAT_THREAD_PRIO       12
+
+#define TASK_STK_SIZE_COMMON        128
 
 #define  APP_TASK_START_STK_SIZE		128
 //process at command

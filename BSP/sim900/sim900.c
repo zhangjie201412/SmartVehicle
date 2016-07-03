@@ -6,22 +6,19 @@
 #include "ringbuffer.h"
 #include "cJSON.h"
 #include "malloc.h"
-#include "GE_COMMON2.h"
 #include "flexcan.h"
 #include "m25p16.h"
 
-uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"139.196.46.68\",\"9999\"\r\n";
+uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"139.224.17.163\",\"8880\"\r\n";
 //uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"117.81.228.156\",\"9999\"\r\n";
 static uint8_t rx_buf[100];
 static struct rb rx_rb;
 OS_EVENT *rx_semaphore;
 
 #define RECEIVE_TASK_STK_SIZE       1024
-#define SIM900_RX_PRIO              5
 OS_STK recvTaskStk[RECEIVE_TASK_STK_SIZE];
 
-#define FAKE_TASK_STK_SIZE          512
-#define FAKE_TASK_PRIO              6
+#define FAKE_TASK_STK_SIZE          128
 OS_STK fakeTaskStk[FAKE_TASK_STK_SIZE];
 static void fake_thread(void *parg);
 
@@ -33,7 +30,6 @@ __IO int rx_offset;
 static void thread_sim900_rx_entry(void *parg);
 
 static uint8_t status = STATUS_POWERON;
-__IO uint8_t device_id[17];
 
 RecvFunc recvFunc;
 void sim900_register_recv(RecvFunc func)
@@ -70,7 +66,8 @@ static void fake_thread(void *parg)
 {
     parg = parg;
     while(1) {
-        OSTimeDlyHMSM(0, 0, 1, 0);
+        OSTimeDlyHMSM(0, 0, 2, 0);
+        recvFunc("123");
     }
 }
 
@@ -124,11 +121,13 @@ void sim900_init(void)
             SIM900_RX_PRIO);
     status = STATUS_POWERON;
 
+#if 0
     //fake thread to do some emulator
     printk("create fake thread\r\n");
     OSTaskCreate(fake_thread, (void *)0,
             &fakeTaskStk[FAKE_TASK_STK_SIZE - 1],
             FAKE_TASK_PRIO);
+#endif
 }
 
 void send(uint8_t c)

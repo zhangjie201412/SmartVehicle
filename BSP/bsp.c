@@ -60,7 +60,7 @@ void BSP_Init(void)
     USART_Config(115200);
     /* NVIC configuration */
     NVIC_Configuration();
-    iwdg_init(IWDG_Prescaler_256, 0xfff);
+//    iwdg_init(IWDG_Prescaler_256, 0xfff);
 }
 
 /*******************************************************************************

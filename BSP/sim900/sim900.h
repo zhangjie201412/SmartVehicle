@@ -2,7 +2,6 @@
 #define __SIM900_H__
 #include "bsp.h"
 #include "includes.h"
-#include "data_type.h"
 
 #define RCC_APBxPeriph_SIM900_USART_IO          RCC_APB2Periph_GPIOB
 #define RCC_APBxPeriph_SIM900_USART             RCC_APB1Periph_USART3
