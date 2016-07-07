@@ -12,12 +12,19 @@
 #define CAN_PinRemap                DISABLE
 #define flexcan_rx_callack			USB_LP_CAN_RX0_IRQHandler
 
-void flexcan_nvic_init(void);
+#define RX_PACKAGE_SIZE             32
+
+enum {
+    DIR_INPUT = 1,
+    DIR_OUTPUT,
+    DIR_BI,
+};
+
 void flexcan_gpio_init(void);
 void flexcan_filter(u32 id1, u32 id2, u32 mid1, u32 mid2);
 void flexcan_init(u8 velocity);
-uint8_t *flexcan_send_frame(CanTxMsg *txMsg);
-void flexcan_send_frame2(CanTxMsg *txMsg);
 void flexcan_can_enable(void);
+uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount);
+CanRxMsg *flexcan_dump(void);
 
 #endif

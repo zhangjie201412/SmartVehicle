@@ -6,7 +6,6 @@
 #include "ringbuffer.h"
 #include "cJSON.h"
 #include "malloc.h"
-#include "flexcan.h"
 #include "m25p16.h"
 
 uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"139.224.17.163\",\"8880\"\r\n";

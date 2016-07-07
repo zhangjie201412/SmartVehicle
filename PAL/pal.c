@@ -1,8 +1,10 @@
 #include "pal.h"
 #include "stdio.h"
 #include "fake.h"
+#include "toyota.h"
 #include "transmit.h"
 #include "wdg.h"
+#include "flexcan.h"
 
 #define DEVICE_ID_ADDRESS               0x80
 #define TRANSMIT_TASK_STK_SIZE          128
@@ -14,10 +16,12 @@ Pal mPal;
 
 void pal_init(void)
 {
+    uint8_t i = 0;
+    CanRxMsg *rx;
     printf("-> %s\r\n", __func__);
     //create mailbox
     mPal.mailbox = OSMboxCreate((void *)0);
-    fake_setup();
+    toyota_setup();
     transmit_init();
     iwdg_init(IWDG_Prescaler_256, 0xfff);
     OSTaskCreate(transmit_thread, (void *)0,

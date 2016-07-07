@@ -95,12 +95,32 @@ void recv_callback(uint8_t *buf)
 static void heartbeat_thread(void *parg)
 {
     parg = parg;
+    //send login message firstly
+    login();
+    OSTimeDlyHMSM(0, 0, LOGIN_DELAYED_TIME, 0);
     for(;;) {
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL, 0);
         //send heartbeat
         send_heartbeat(heartbeat ++);
         heartbeat = (heartbeat == 100) ? 0 : heartbeat;
     }
+}
+
+void login(void)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+
+    getDeviceId();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_LOGIN);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    sim900_write((uint8_t *)out, length);
+    cJSON_Delete(root);
+    myfree(out);
 }
 
 void send_heartbeat(uint8_t count)

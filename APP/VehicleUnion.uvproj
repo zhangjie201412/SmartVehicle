@@ -691,6 +691,11 @@
               <FileType>1</FileType>
               <FilePath>..\PAL\vehicles\fake.c</FilePath>
             </File>
+            <File>
+              <FileName>toyota.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\vehicles\toyota.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
