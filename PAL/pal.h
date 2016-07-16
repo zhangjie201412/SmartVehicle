@@ -12,6 +12,7 @@ typedef enum {
     CONTROL_SUNFLOOR,
     CONTROL_TRUNK,
     CONTROL_FINDCAR,
+    CONTROL_IMMOLOCK,
     CONTROL_END,
 } EnumControlCapability;
 
@@ -39,6 +40,9 @@ typedef struct {
 
 void pal_init(void);
 void pal_do_bcm(uint8_t id, uint8_t val);
+void immolock(uint8_t state);
+void set_immo_state(uint8_t state);
+
 void getDeviceId(void);
 Pal *getPalInstance(void);
 

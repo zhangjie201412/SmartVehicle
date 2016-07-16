@@ -696,6 +696,16 @@
               <FileType>1</FileType>
               <FilePath>..\PAL\vehicles\toyota.c</FilePath>
             </File>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>gm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\PAL\vehicles\gm.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

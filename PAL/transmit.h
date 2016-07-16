@@ -7,6 +7,7 @@
 #define KEY_MSG_TYPE        "msg_type"
 #define KEY_HEARTBEAT       "heartbeat_count"
 #define KEY_CMD_ID          "cmd_id"
+#define KEY_VEHICLE_TYPE    "model"
 
 #define LOGIN_DELAYED_TIME          6
 
@@ -17,6 +18,7 @@
 
 #define MSG_TYPE_LOGIN              8
 #define MSG_TYPE_LOGIN_RSP          9
+#define MSG_TYPE_VEHICLE_TYPE       10
 
 typedef struct {
     uint8_t id;

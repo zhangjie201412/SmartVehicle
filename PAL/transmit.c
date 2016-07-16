@@ -3,6 +3,7 @@
 #include "pal.h"
 #include "cJSON.h"
 #include "malloc.h"
+#include "app.h"
 
 #define HEARTBEAT_INTERVAL 10
 
@@ -17,6 +18,7 @@ CtrlItem ctrlTable[CONTROL_END] = {
     {CONTROL_SUNFLOOR, "bcm_fun_sunfloor"},
     {CONTROL_TRUNK, "bcm_fun_trunk"},
     {CONTROL_FINDCAR, "bcm_fun_findcar"},
+    {CONTROL_IMMOLOCK, "bcm_fun_immolock"},
 };
 
 OS_STK heartbeatTaskStk[TASK_STK_SIZE_COMMON];
@@ -56,7 +58,12 @@ void recv_callback(uint8_t *buf)
     } else {
         item = cJSON_GetObjectItem(json, KEY_MSG_TYPE);
         msg_type = item->valueint;
+        printf("msg type = %d\r\n", msg_type);
         switch(msg_type) {
+            case MSG_TYPE_HEARTBEAT:
+                printf("---device offline---\r\n");
+                go_reboot();
+                break;
             case MSG_TYPE_HEARTBEAT_RSP:
                 item = cJSON_GetObjectItem(json, KEY_HEARTBEAT);
                 heartbeat_rsp = item->valueint;
@@ -65,7 +72,7 @@ void recv_callback(uint8_t *buf)
                 if(((heartbeat - 1) * 2 + 1) == heartbeat_rsp) {
                     //printf("heartbeat!\r\n");
                 } else {
-                    printf("fauled to parse heartbeat\r\n");
+                    printf("failed to parse heartbeat\r\n");
                 }
                 break;
 
@@ -84,8 +91,21 @@ void recv_callback(uint8_t *buf)
                         ctrlMsg.value = ctrl_val;
                         OSMboxPost(getPalInstance()->mailbox, &ctrlMsg);
                     }
-
                 }
+                break;
+            case MSG_TYPE_VEHICLE_TYPE:
+                item = cJSON_GetObjectItem(json, KEY_VEHICLE_TYPE);
+                if(!strcmp(item->valuestring, "toyota")) {
+                    printf("->toyota\r\n");
+                    toyota_setup();
+                } else if(!strcmp(item->valuestring, "gm")) {
+                    printf("->gm\r\n");
+                    gm_setup();
+                } else {
+                    fake_setup();
+                }
+                break;
+
         }
     }
     cJSON_Delete(json);
@@ -101,8 +121,8 @@ static void heartbeat_thread(void *parg)
     for(;;) {
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL, 0);
         //send heartbeat
-        send_heartbeat(heartbeat ++);
         heartbeat = (heartbeat == 100) ? 0 : heartbeat;
+        send_heartbeat(heartbeat ++);
     }
 }
 

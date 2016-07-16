@@ -49,7 +49,7 @@
 
 #define OS_TICK_STEP_EN           1    /* Enable tick stepping feature for uC/OS-View                  */
 //+++set 0.5ms per tick+++
-#define OS_TICKS_PER_SEC       1000    /* Set the number of ticks in one second                        */
+#define OS_TICKS_PER_SEC       5000    /* Set the number of ticks in one second                        */
 //---by Jay---
                                        /* --------------------- TASK STACK SIZE ---------------------- */
 #define OS_TASK_TMR_STK_SIZE    128    /* Timer      task stack size (# of OS_STK wide entries)        */

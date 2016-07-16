@@ -1,6 +1,7 @@
 #ifndef __toyota_H__
 #define __toyota_H__
 #include "stm32f10x.h"
+#include "utils.h"
 
 void toyota_setup(void);
 void toyota_ctrl_window(uint8_t state);

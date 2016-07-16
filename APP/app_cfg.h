@@ -50,6 +50,7 @@
 */
 
 #define  APP_TASK_START_PRIO			2
+#define  IMMOLOCK_TASK_PRIO			3
 //process at command
 #define task_process_atcmd_prio			10
 //work process

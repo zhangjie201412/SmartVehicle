@@ -85,6 +85,13 @@ int main(void)
  *********************************************************************************************************
  */
 
+static uint8_t need_reboot = 0;
+
+void go_reboot(void)
+{
+    need_reboot = 1;
+}
+
 static  void App_TaskStart(void* p_arg)
 {
     (void) p_arg;
@@ -101,10 +108,12 @@ static  void App_TaskStart(void* p_arg)
 
     App_TaskCreate();
 
+    need_reboot = 0;
     while (1)
     {
         OSTimeDlyHMSM(0, 0, 5, 0);
-        iwdg_feed();
+        if(need_reboot == 0)
+            iwdg_feed();
     }
 }
 
@@ -144,7 +153,7 @@ static void task_process_atcmd(void *parg)
     printk("%s: Enter\r\n", __func__);
     flash_init();
     flexcan_init(CAN_500K);
-    flexcan_filter(0x750, 0x750, 0x7ff, 0x7ff);
+    flexcan_filter(0x641, 0x641, 0x6ff, 0x6ff);
 
     pal_init();
     while(1) {
