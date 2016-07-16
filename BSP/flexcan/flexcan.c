@@ -4,24 +4,18 @@
 #include "ucos_ii.h"
 #include "ringbuffer.h"
 
-OS_EVENT *can_rx_sem;
-static struct rb can_rx_rb;
-static uint8_t can_rx_buf[128];
-__IO uint8_t rx_ram[128];
-
-uint8_t trans_count = 0;
-//+++error code work arround
-uint8_t start_error_code = 0;
-//---
+static __IO CanRxMsg g_rxMsg[RX_PACKAGE_SIZE];
+static __IO uint8_t w_off, r_off;
+OS_EVENT *lock;
 
 void flexcan_init(u8 velocity)
 {
-	CAN_InitTypeDef CAN_InitStructure;
+    INT8U err;
+    CAN_InitTypeDef CAN_InitStructure;
 
-	//init for can
-	flexcan_can_enable();
-	flexcan_nvic_init();
-	flexcan_gpio_init();
+    //init for can
+    flexcan_can_enable();
+    flexcan_gpio_init();
 
     CAN_DeInit(CAN1);
     CAN_StructInit(&CAN_InitStructure);
@@ -38,22 +32,9 @@ void flexcan_init(u8 velocity)
     CAN_InitStructure.CAN_BS2 = CAN_BS2_6tq;
     CAN_InitStructure.CAN_Prescaler = velocity;
     CAN_Init(CAN1, &CAN_InitStructure);
-
-	can_rx_sem = OSSemCreate(0);
-	rb_init(&can_rx_rb, &can_rx_buf[0], sizeof(can_rx_buf));
-}
-
-void flexcan_nvic_init(void)
-{
-	NVIC_InitTypeDef  NVIC_InitStructure;
-	
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
-	
-	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+    w_off = 0;
+    r_off = 0;
+    lock = OSMutexCreate(1, &err);
 }
 
 void flexcan_gpio_init(void)
@@ -114,105 +95,99 @@ void flexcan_can_enable(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-	GPIO_ResetBits(GPIOA, GPIO_Pin_8);
-	GPIO_ResetBits(GPIOC, GPIO_Pin_9);
+    GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+    GPIO_ResetBits(GPIOC, GPIO_Pin_9);
 }
 
-__IO uint8_t flag;
-
-uint8_t *flexcan_send_frame(CanTxMsg *txMsg)
+void flexcan_send_frame(CanTxMsg *txMsg)
 {
-	INT8U os_err;
-	u32 count = 0;
+    u32 count = 0;
     u8 transmitMailBox;
-	uint8_t one_byte;
-	uint8_t i = 0;
 
-	//rb_init(&can_rx_rb, &can_rx_buf[0], sizeof(can_rx_buf));
     txMsg->IDE = CAN_ID_STD;
     transmitMailBox = CAN_Transmit(CAN1, txMsg);
     while(CAN_TransmitStatus(CAN1, transmitMailBox) != CANTXOK) {
-		count ++;
-		if(count > 1000000)
-			break;
-	}
-	
-	//wait for can response
-	OSSemPend(can_rx_sem, 2 * OS_TICKS_PER_SEC, &os_err);
-	if(os_err == OS_ERR_TIMEOUT) {
-        printk("%s: wait for can response timeout[%04x]\r\n",
-            __func__, txMsg->StdId);
-		return NULL;
-    } else {
-		//printk("%s: get data\r\n", __func__);
-		memset((void *)rx_ram, 0x00, 128);
-		i = 0;
-		while(rb_get(&can_rx_rb, &one_byte, 1) == TRUE) {
-			rx_ram[i++] = one_byte;
-			//printk("===[%d] = 0x%02x\r\n", i - 1, one_byte);
-		}
-		
-		return (uint8_t *)&rx_ram;
-	}
+        count ++;
+        if(count > 1000000)
+            break;
+    }
 }
 
-void flexcan_send_frame2(CanTxMsg *txMsg)
+uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount)
 {
-	u32 count = 0;
-    u8 transmitMailBox;
+    CanRxMsg rxMsg;
+    INT8U err;
+    uint8_t i = 0, j = 0;
+    uint16_t count = 0;
+    uint8_t ret = 0;
 
-    printf("send id = %04x ext id = %08x\r\n", txMsg->StdId, txMsg->ExtId);
-	//rb_init(&can_rx_rb, &can_rx_buf[0], sizeof(can_rx_buf));
-    txMsg->IDE = CAN_ID_STD;
-    transmitMailBox = CAN_Transmit(CAN1, txMsg);
-    while(CAN_TransmitStatus(CAN1, transmitMailBox) != CANTXOK) {
-		count ++;
-		if(count > 1000000)
-			break;
-	}
+    if(dir & DIR_INPUT) {
+        flexcan_filter(rxId, rxId, rxId | 0x00ff, rxId | 0x00ff);
+    }
+    if(dir & DIR_OUTPUT) {
+        flexcan_send_frame(txMsg);
+    }
+
+    if(dir & DIR_INPUT) {
+        for(i = 0; i < rxCount; i++) {
+            while((CAN_MessagePending(CAN1, CAN_FIFO0) < 1)
+                    && (count < 0xffff)) {
+                count ++;
+            }
+
+            if(i < 0xffff) {
+                OSMutexPend(lock, 0, &err);
+                CAN_Receive(CAN1, CAN_FIFO0, &rxMsg);
+                //write can msg
+                g_rxMsg[w_off].StdId = rxMsg.StdId;
+                g_rxMsg[w_off].DLC = rxMsg.DLC;
+                for(j = 0; j < rxMsg.DLC; j++) {
+                    g_rxMsg[w_off].Data[j] = rxMsg.Data[j];
+                }
+                w_off ++;
+                if(w_off == RX_PACKAGE_SIZE) {
+                    w_off = 0;
+                }
+                ret ++;
+                OSMutexPost(lock);
+            } else {
+                printk("%s: timeout\r\n", __func__);
+                break;
+            }
+        }
+    }
+
+    return ret;
 }
 
-uint8_t error_code_count = 0;
-uint8_t error_code_buf[128];
+uint8_t flexcan_count(void)
+{
+    if(w_off >= r_off)
+        return w_off - r_off;
+    else
+        return RX_PACKAGE_SIZE - r_off + w_off;
+}
+
+
+CanRxMsg *flexcan_dump(void)
+{
+    CanRxMsg *msg = NULL;
+    INT8U err;
+
+    OSMutexPend(lock, 0, &err);
+    if(r_off == w_off) {
+        OSMutexPost(lock);
+        return NULL;
+    }
+
+    msg = &g_rxMsg[r_off ++];
+    if(r_off == RX_PACKAGE_SIZE)
+        r_off = 0;
+    OSMutexPost(lock);
+
+    return msg;
+}
 
 void flexcan_rx_callack(void)
 {
-    uint8_t i = 0;
-    u8 count = 0;
-    CanRxMsg rxMsg;
-	u8 len;
-    //u16 id;
-    CAN_Receive(CAN1, CAN_FIFO0, &rxMsg);
-    len = rxMsg.DLC;
-    //id = rxMsg.StdId;
-	//printk("id = %04x\r\n", id);
-#if 0
-    printk("-id = %04x, dlc = %d, ", rxMsg.StdId, rxMsg.DLC);
-    for(i = 0; i < rxMsg.DLC; i++) {
-        printk("%02x  ", rxMsg.Data[i]);
-    }
-    printk("-\r\n");
-#endif
-    if(start_error_code) {
-        if(rxMsg.Data[0] = 0x81 &&
-                rxMsg.Data[1] == 0x00 && rxMsg.Data[2] == 0x00) {
-            //error_code end
-            count = 2 * error_code_count;
-            rb_put(&can_rx_rb, &count, 1);
-            rb_put(&can_rx_rb, error_code_buf, count);
-    	    OSSemPost(can_rx_sem);
-            error_code_count = 0;
-        } else {
-            error_code_buf[error_code_count * 2] = rxMsg.Data[1];
-            error_code_buf[error_code_count * 2 + 1] = rxMsg.Data[2];
-            error_code_count++;
-        }
-    } else {
-	    if(trans_count >= 2)
-		    return;
-    	rb_put(&can_rx_rb, &len, 1);
-    	rb_put(&can_rx_rb, rxMsg.Data, len);
-    	OSSemPost(can_rx_sem);
-    	trans_count ++;
-    }
 }

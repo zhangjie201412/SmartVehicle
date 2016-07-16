@@ -29,7 +29,8 @@ void transmit_init(void)
     //init for gprs
     sim900_init();
     //connect the server
-    sim900_connect();
+//    sim900_connect();
+    fake_setup();
     //register callback
     sim900_register_recv(recv_callback);
     //run heart beat thread
@@ -116,6 +117,7 @@ static void heartbeat_thread(void *parg)
 {
     parg = parg;
     //send login message firstly
+    printf("login!\r\n");
     login();
     OSTimeDlyHMSM(0, 0, LOGIN_DELAYED_TIME, 0);
     for(;;) {
@@ -162,3 +164,26 @@ void send_heartbeat(uint8_t count)
     cJSON_Delete(root);
     myfree(out);
 }
+
+void control_rsp(uint32_t cmd_id, uint8_t cmd_type)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+
+    getDeviceId();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_CTRL_RSP);
+    cJSON_AddNumberToObject(root, KEY_CMD_ID, cmd_id);
+    cJSON_AddNumberToObject(root, KEY_STATUS, 0);
+    cJSON_AddStringToObject(root, KEY_CMD_TYPE, ctrlTable[cmd_type].key);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    //printf("%s\r\n", out);
+    sim900_write((uint8_t *)out, length);
+
+    cJSON_Delete(root);
+    myfree(out);
+}
+

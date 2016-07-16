@@ -8,6 +8,8 @@
 #define KEY_HEARTBEAT       "heartbeat_count"
 #define KEY_CMD_ID          "cmd_id"
 #define KEY_VEHICLE_TYPE    "model"
+#define KEY_STATUS          "status"
+#define KEY_CMD_TYPE        "cmd_type"
 
 #define LOGIN_DELAYED_TIME          6
 
@@ -22,12 +24,12 @@
 
 typedef struct {
     uint8_t id;
-    uint8_t key[NAME_MAX_SIZE];
+    char key[NAME_MAX_SIZE];
 } CtrlItem;
 
 typedef struct {
     uint8_t id;
-    int cmd_id;
+    uint32_t cmd_id;
     uint8_t value;
 } CtrlMsg;
 
@@ -36,5 +38,6 @@ void transmit_init(void);
 void recv_callback(uint8_t *buf);
 void login(void);
 void send_heartbeat(uint8_t count);
+void control_rsp(uint32_t cmd_id, uint8_t cmd_type);
 
 #endif
