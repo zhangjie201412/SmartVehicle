@@ -11,7 +11,34 @@ PidSupportItem supportItems[PID_SIZE] =
 {
     {ENG_DATA_RPM, SUPPORTED},
     {ENG_DATA_VS, SUPPORTED},
-    {ENG_DATA_ECT, SUPPORTED}
+    {ENG_DATA_ECT, SUPPORTED},
+    {ENG_DATA_IAT, UNSUPPORTED},
+    {ENG_DATA_APP, UNSUPPORTED},
+    {ENG_DATA_TP, UNSUPPORTED},
+    {ENG_DATA_ERT, UNSUPPORTED},
+    {ENG_DATA_LOAD, SUPPORTED},
+    {ENG_DATA_LTFT, SUPPORTED},
+    {ENG_DATA_STFT, SUPPORTED},
+    {ENG_DATA_MISFIRE1, UNSUPPORTED},
+    {ENG_DATA_MISFIRE2, UNSUPPORTED},
+    {ENG_DATA_MISFIRE3, UNSUPPORTED},
+    {ENG_DATA_MISFIRE4, UNSUPPORTED},
+    {ENG_DATA_MISFIRE5, UNSUPPORTED},
+    {ENG_DATA_MISFIRE6, UNSUPPORTED},
+    {ENG_DATA_FCLS, UNSUPPORTED},
+    {ENG_DATA_KEYSTATUS, UNSUPPORTED},
+    {ENG_DATA_HO2S1, UNSUPPORTED},
+    {ENG_DATA_HO2S2, UNSUPPORTED},
+    {ENG_DATA_MAP, UNSUPPORTED},
+    {ENG_DATA_INJECTPULSE, UNSUPPORTED},
+    {ENG_DATA_OILPRESSURE, UNSUPPORTED},
+    {ENG_DATA_OILLEVELSTATUS, UNSUPPORTED},
+    {ENG_DATA_AF, UNSUPPORTED},
+    {ENG_DATA_IGTIMING, UNSUPPORTED},
+    {ENG_DATA_MAF, UNSUPPORTED},
+    {ENG_DATA_OILLIFE, UNSUPPORTED},
+    {ENG_DATA_OILTEMP, UNSUPPORTED},
+    {ENG_DATA_FUEL, UNSUPPORTED},
 };
 
 StdDataStream stdDs[PID_SIZE] =
@@ -28,6 +55,168 @@ StdDataStream stdDs[PID_SIZE] =
     },
     {
         ENG_DATA_ECT, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //IAT
+    {
+        ENG_DATA_IAT, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //APP
+    {
+        ENG_DATA_APP, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //TP
+    {
+        ENG_DATA_TP, 0X7df, 8,
+        {0x02, 0x01, 0x0c, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 2,
+    },
+    //ERT
+    {
+        ENG_DATA_ERT, 0X7df, 8,
+        {0x02, 0x01, 0x0d, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //LOAD
+    {
+        ENG_DATA_LOAD, 0X7df, 8,
+        {0x02, 0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //LTFT
+    {
+        ENG_DATA_LTFT, 0X7df, 8,
+        {0x02, 0x01, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //STFT
+    {
+        ENG_DATA_STFT, 0X7df, 8,
+        {0x02, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MISFIRE1
+    {
+        ENG_DATA_MISFIRE1, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MISFIRE2
+    {
+        ENG_DATA_MISFIRE2, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MISFIRE3
+    {
+        ENG_DATA_MISFIRE3, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MISFIRE4
+    {
+        ENG_DATA_MISFIRE4, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MISFIRE5
+    {
+        ENG_DATA_MISFIRE5, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MISFIRE6
+    {
+        ENG_DATA_MISFIRE6, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //FCLS
+    {
+        ENG_DATA_FCLS, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //KEYSTATUS
+    {
+        ENG_DATA_KEYSTATUS, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //HO2S1
+    {
+        ENG_DATA_HO2S1, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //HO2S2
+    {
+        ENG_DATA_HO2S2, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MAP
+    {
+        ENG_DATA_MAP, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //INJECTPULSE
+    {
+        ENG_DATA_INJECTPULSE, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //OILPRESSURE
+    {
+        ENG_DATA_OILPRESSURE, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //OILLEVELSTATUS
+    {
+        ENG_DATA_OILLEVELSTATUS, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //AF
+    {
+        ENG_DATA_AF, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //IGTIMING
+    {
+        ENG_DATA_IGTIMING, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //MAF
+    {
+        ENG_DATA_MAF, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //OILLIFE
+    {
+        ENG_DATA_OILLIFE, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //OILTEMP
+    {
+        ENG_DATA_OILTEMP, 0X7df, 8,
+        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 3, 1,
+    },
+    //FUEL
+    {
+        ENG_DATA_FUEL, 0X7df, 8,
         {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
         0x7e8, 3, 1,
     },
@@ -62,7 +251,10 @@ uint8_t* fake_data_stream(uint8_t pid, uint8_t *len)
     CanTxMsg txMsg;
     CanRxMsg *rxMsg;
 
-    printf("-> %s pid = %d\r\n", __func__, pid);
+    //check if this pid supported
+    if(supportItems[pid].support != SUPPORTED)
+        return NULL;
+
     valid_len = stdDs[pid].valid_len;
     offset = stdDs[pid].offset;
     txMsg.StdId = stdDs[pid].txId;

@@ -219,34 +219,31 @@ void sim900_connect(void)
                 //case STATUS_INIT:
             case STATUS_CONFIG:
                 printk("wait for config done\r\n");
-                OSTimeDlyHMSM(0, 0, 20, 0);
+                OSTimeDlyHMSM(0, 0, 10, 0);
                 sim900_write("AT+CREG?\r\n", 10);
-                OSTimeDlyHMSM(0, 0, 0, 500);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 sim900_write("AT+CIPMODE=1\r\n", 14);
-                OSTimeDlyHMSM(0, 0, 0, 500);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 sim900_write("AT+CGATT?\r\n", 11);
-                OSTimeDlyHMSM(0, 0, 0, 500);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 sim900_write("AT+CSTT=\"CMNET\"\r\n", 17);
-                OSTimeDlyHMSM(0, 0, 0, 500);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 sim900_write("AT+CIICR\r\n", 10);
                 OSTimeDlyHMSM(0, 0, 2, 0);
                 printk("try to get ip address\r\n");
                 sim900_write("AT+CIFSR\r\n", 10);
-                OSTimeDlyHMSM(0, 0, 2, 0);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 sim900_write("AT+CGATT=1\r\n", 12);
-                OSTimeDlyHMSM(0, 0, 0, 500);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 sim900_write("AT+CGSN\r\n", 9);
-                OSTimeDlyHMSM(0, 0, 0, 500);
+                OSTimeDlyHMSM(0, 0, 0, 100);
                 status = STATUS_CONNECTING;
                 break;
             case STATUS_CONNECTING:
                 printk("wait for connecting...\r\n");
                 sim900_write("AT+CIPSTATUS\r\n", 14);
-                OSTimeDlyHMSM(0, 0, 1, 0);
                 OSTimeDlyHMSM(0, 0, 2, 0);
                 for(i = 0; i < 1; i++) {
-                    //sim900_write("AT+CIPCLOSE\r\n", 13);
-                    //OSTimeDlyHMSM(0, 0, 2, 0);
                     clear_rx_buf();
                     sim900_write(connect_cmd, strlen((char *)&connect_cmd[0]));
                     OSTimeDlyHMSM(0, 0, 3, 0);

@@ -9,5 +9,6 @@ void gm_ctrl_light(uint8_t state);
 void gm_ctrl_sunfloor(uint8_t state);
 void gm_ctrl_trunk(uint8_t state);
 void gm_ctrl_findcar(uint8_t state);
+uint8_t* fake_data_stream(uint8_t pid, uint8_t *len);
 
 #endif

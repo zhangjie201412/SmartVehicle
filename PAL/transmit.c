@@ -23,14 +23,14 @@ CtrlItem ctrlTable[CONTROL_END] = {
 
 OS_STK heartbeatTaskStk[TASK_STK_SIZE_COMMON];
 static void heartbeat_thread(void *parg);
+static uint8_t connected = FALSE;
 
 void transmit_init(void)
 {
     //init for gprs
     sim900_init();
     //connect the server
-//    sim900_connect();
-    fake_setup();
+    sim900_connect();
     //register callback
     sim900_register_recv(recv_callback);
     //run heart beat thread
@@ -38,6 +38,12 @@ void transmit_init(void)
             &heartbeatTaskStk[TASK_STK_SIZE_COMMON - 1],
             HEARTBEAT_THREAD_PRIO);
     heartbeat = 0;
+    connected = FALSE;
+}
+
+uint8_t isConnected(void)
+{
+    return connected;
 }
 
 void recv_callback(uint8_t *buf)
@@ -72,6 +78,7 @@ void recv_callback(uint8_t *buf)
                 //        heartbeat, heartbeat_rsp);
                 if(((heartbeat - 1) * 2 + 1) == heartbeat_rsp) {
                     //printf("heartbeat!\r\n");
+                    connected = TRUE;
                 } else {
                     printf("failed to parse heartbeat\r\n");
                 }
@@ -181,6 +188,35 @@ void control_rsp(uint32_t cmd_id, uint8_t cmd_type)
     out = cJSON_Print(root);
     length = strlen(out);
     //printf("%s\r\n", out);
+    sim900_write((uint8_t *)out, length);
+
+    cJSON_Delete(root);
+    myfree(out);
+}
+
+void upload_item(UpdateItem *item)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+    char val_buf[16];
+    uint8_t i;
+    uint8_t index = 0, n = 0;
+
+    getDeviceId();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_UPLOAD);
+    //make value
+    memset(val_buf, 0x00, 16);
+    for(i = 0; i < item->len; i++) {
+        n = sprintf(val_buf + index, "%02x", item->data[i]);
+        index += n;
+    }
+    cJSON_AddStringToObject(root, getPidKey(item->pid), val_buf);
+
+    printf("%s: %s\r\n", __func__, getPidKey(item->pid));
+    out = cJSON_Print(root);
+    length = strlen(out);
     sim900_write((uint8_t *)out, length);
 
     cJSON_Delete(root);

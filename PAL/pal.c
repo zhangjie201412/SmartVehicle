@@ -8,6 +8,9 @@
 #include "flexcan.h"
 #include "m25p16.h"
 
+#define UPLOAD_THREAD_INTERVAL          10
+#define ENG_INTERVAL                    40
+
 #define DEVICE_ID_ADDRESS               0x80
 #define TRANSMIT_TASK_STK_SIZE          128
 OS_STK transmitTaskStk[TRANSMIT_TASK_STK_SIZE];
@@ -20,10 +23,39 @@ OS_STK uploadTaskStk[UPLOAD_TASK_STK_SIZE];
 
 PidItem pidList[PID_SIZE] =
 {
-    {ENG_DATA_RPM, "eng_data_rpm"},
-    {ENG_DATA_VS, "eng_data_vs"},
-    {ENG_DATA_ECT, "eng_data_ect"},
+    {ENG_DATA_RPM, "eng_data_rpm", 10},
+    {ENG_DATA_VS, "eng_data_vs", ENG_INTERVAL},
+    {ENG_DATA_ECT, "eng_data_ect", ENG_INTERVAL},
+    {ENG_DATA_IAT, "eng_data_iat", ENG_INTERVAL},
+    {ENG_DATA_APP, "eng_data_app", ENG_INTERVAL},
+    {ENG_DATA_TP, "eng_data_tp", ENG_INTERVAL},
+    {ENG_DATA_ERT, "eng_data_ert", ENG_INTERVAL},
+    {ENG_DATA_LOAD, "eng_data_load", ENG_INTERVAL},
+    {ENG_DATA_LTFT, "eng_data_ltft", ENG_INTERVAL},
+    {ENG_DATA_STFT, "eng_data_stft", ENG_INTERVAL},
+    {ENG_DATA_MISFIRE1, "eng_data_misfire1", ENG_INTERVAL},
+    {ENG_DATA_MISFIRE2, "eng_data_misfire2", ENG_INTERVAL},
+    {ENG_DATA_MISFIRE3, "eng_data_misfire3", ENG_INTERVAL},
+    {ENG_DATA_MISFIRE4, "eng_data_misfire4", ENG_INTERVAL},
+    {ENG_DATA_MISFIRE5, "eng_data_misfire5", ENG_INTERVAL},
+    {ENG_DATA_MISFIRE6, "eng_data_misfire6", ENG_INTERVAL},
+    {ENG_DATA_FCLS, "eng_data_fcls", ENG_INTERVAL},
+    {ENG_DATA_KEYSTATUS, "eng_data_keystatus", ENG_INTERVAL},
+    {ENG_DATA_HO2S1, "eng_data_ho2s1", ENG_INTERVAL},
+    {ENG_DATA_HO2S2, "eng_data_ho2s2", ENG_INTERVAL},
+    {ENG_DATA_MAP, "eng_data_map", ENG_INTERVAL},
+    {ENG_DATA_INJECTPULSE, "eng_data_injectpulse", ENG_INTERVAL},
+    {ENG_DATA_OILPRESSURE, "eng_data_oilpressure", ENG_INTERVAL},
+    {ENG_DATA_OILLEVELSTATUS, "eng_data_oillevelstatus", ENG_INTERVAL},
+    {ENG_DATA_AF, "eng_data_af", ENG_INTERVAL},
+    {ENG_DATA_IGTIMING, "eng_data_igtiming", ENG_INTERVAL},
+    {ENG_DATA_MAF, "eng_data_maf", ENG_INTERVAL},
+    {ENG_DATA_OILLIFE, "eng_data_oillife", ENG_INTERVAL},
+    {ENG_DATA_OILTEMP, "eng_data_oiltemp", ENG_INTERVAL},
+    {ENG_DATA_FUEL, "eng_data_fuel", ENG_INTERVAL},
 };
+
+UpdateItem updateList[PID_SIZE];
 
 static void transmit_thread(void *parg);
 static void immolock_thread(void *parg);
@@ -34,7 +66,8 @@ __IO static Pal mPal;
 
 void pal_init(void)
 {
-    printf("-> %s\r\n", __func__);
+    uint8_t i;
+
     //create mailbox
     mPal.mailbox = OSMboxCreate((void *)0);
     
@@ -49,6 +82,10 @@ void pal_init(void)
     OSTaskCreate(upload_thread, (void *)0,
             &uploadTaskStk[UPLOAD_TASK_STK_SIZE - 1],
             UPLOAD_TASK_PRIO);
+    //clear all update item flag
+    for(i = 0;i < PID_SIZE; i++) {
+        updateList[i].updated = FALSE;
+    }
 }
 
 static void transmit_thread(void *pargs)
@@ -149,6 +186,39 @@ void pal_do_bcm(uint8_t id, uint8_t val, uint32_t cmd_id)
     //printf("%s:----\r\n", __func__);
 }
 
+void update_item(uint8_t pid, uint8_t *data, uint8_t len)
+{
+    uint8_t i;
+
+    updateList[pid].len = len;
+    for(i = 0; i < len; i++) {
+        updateList[pid].data[i] = data[i];
+    }
+    updateList[pid].updated = TRUE;
+    updateList[pid].spend_time += UPLOAD_THREAD_INTERVAL;
+}
+
+void clear_item(uint8_t pid)
+{
+    updateList[pid].updated = FALSE;
+    updateList[pid].spend_time = 0;
+}
+
+void upload_server(void)
+{
+    uint8_t i = 0;
+
+    for(; i < PID_SIZE; i++) {
+        if(updateList[i].updated &&
+                (updateList[i].spend_time >= pidList[i].interval)) {
+            //update item
+            updateList[i].pid = i;
+            upload_item(&updateList[i]);
+            clear_item(i);
+        }
+    }
+}
+
 void upload_thread(void *unused)
 {
     uint8_t i = 0, j;
@@ -158,15 +228,28 @@ void upload_thread(void *unused)
     unused = unused;
     //main thread for upload vehicle data
     for(;;) {
-        OSTimeDlyHMSM(0, 0, 5, 0);
+        OSTimeDlyHMSM(0, 0, UPLOAD_THREAD_INTERVAL, 0);
+        if(!isConnected())
+            continue;
+
         for(i = 0; i < PID_SIZE; i++) {
             data = mPal.uploadOps->transfer_data_stream(i, &len);
+            if(data == NULL)
+                continue;
+
             for(j = 0; j < len; j++) {
                 printf("%d(%02x) ", data[j], data[j]);
             }
             printf("\r\n");
+            update_item(i, data, len);
         }
+        upload_server();
     }
+}
+
+const char *getPidKey(uint8_t pid)
+{
+    return pidList[pid].key;
 }
 
 void getDeviceId(void)

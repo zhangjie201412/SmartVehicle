@@ -2,8 +2,10 @@
 #include "pal.h"
 #include "stdio.h"
 #include "flexcan.h"
+#include "fake.h"
 
 DevCtrlOps toyota_ops;
+DevUploadOps toyota_upload_ops;
 
 CanTxMsg toyota_lamp_on = 
 {
@@ -161,6 +163,8 @@ void toyota_setup(void)
     toyota_ops.control_trunk = toyota_ctrl_trunk;
 
     pal->ops = &toyota_ops;
+    toyota_upload_ops.transfer_data_stream = fake_data_stream;
+    pal->uploadOps = &toyota_upload_ops;
 }
 
 void toyota_ctrl_window(uint8_t state)

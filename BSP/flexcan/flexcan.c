@@ -123,6 +123,8 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
 
     if(dir & DIR_INPUT) {
         flexcan_filter(rxId, rxId, rxId | 0x00ff, rxId | 0x00ff);
+    } else {
+        flexcan_filter(0x00, 0x00, 0x00ff, 0x00ff);
     }
     if(dir & DIR_OUTPUT) {
         flexcan_send_frame(txMsg);
@@ -155,6 +157,7 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
                 break;
             }
         }
+    } else {
     }
 
     return ret;

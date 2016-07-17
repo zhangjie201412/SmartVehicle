@@ -17,6 +17,7 @@
 #define MSG_TYPE_HEARTBEAT_RSP      1
 #define MSG_TYPE_CTRL               2
 #define MSG_TYPE_CTRL_RSP           3
+#define MSG_TYPE_UPLOAD             4
 
 #define MSG_TYPE_LOGIN              8
 #define MSG_TYPE_LOGIN_RSP          9
@@ -35,9 +36,11 @@ typedef struct {
 
 void transmit_init(void);
 
+uint8_t isConnected(void);
 void recv_callback(uint8_t *buf);
 void login(void);
 void send_heartbeat(uint8_t count);
 void control_rsp(uint32_t cmd_id, uint8_t cmd_type);
+void upload_item(UpdateItem *item);
 
 #endif

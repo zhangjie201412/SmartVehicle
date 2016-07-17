@@ -1,10 +1,11 @@
 #include "gm.h"
 #include "pal.h"
 #include "stdio.h"
-#include "utils.h"
 #include "flexcan.h"
+#include "fake.h"
 
 DevCtrlOps gm_ops;
+DevUploadOps gm_upload_ops;
 
 CanTxMsg gm_lamp_on = 
 {
@@ -243,7 +244,10 @@ void gm_setup(void)
     gm_ops.control_findcar = gm_ctrl_findcar;
     gm_ops.control_trunk = gm_ctrl_trunk;
 
+    //use fake ebod
+    gm_upload_ops.transfer_data_stream = fake_data_stream;
     pal->ops = &gm_ops;
+    pal->uploadOps = &gm_upload_ops;
 }
 
 void gm_ctrl_window(uint8_t state)
