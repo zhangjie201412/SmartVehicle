@@ -216,9 +216,10 @@ void upload_item(UpdateItem *item)
     }
     cJSON_AddStringToObject(root, getPidKey(item->pid), val_buf);
 
-    printf("%s: %s\r\n", __func__, getPidKey(item->pid));
+    //printf("%s: %s\r\n", __func__, getPidKey(item->pid));
     out = cJSON_Print(root);
     length = strlen(out);
+    printf("%s\r\n", out);
     sim900_write((uint8_t *)out, length);
 
     cJSON_Delete(root);

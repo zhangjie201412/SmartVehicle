@@ -9,7 +9,10 @@
 #include "m25p16.h"
 
 #define UPLOAD_THREAD_INTERVAL          10
-#define ENG_INTERVAL                    40
+#define ENG_INTERVAL                    20
+#define AT_INTERVAL                     30
+#define ABS_INTERVAL                    40
+#define BCM_INTERVAL                    50
 
 #define DEVICE_ID_ADDRESS               0x80
 #define TRANSMIT_TASK_STK_SIZE          128
@@ -53,6 +56,28 @@ PidItem pidList[PID_SIZE] =
     {ENG_DATA_OILLIFE, "eng_data_oillife", ENG_INTERVAL},
     {ENG_DATA_OILTEMP, "eng_data_oiltemp", ENG_INTERVAL},
     {ENG_DATA_FUEL, "eng_data_fuel", ENG_INTERVAL},
+    {ENG_DATA_FUELLEVEL, "eng_data_fuellevel", ENG_INTERVAL},
+    {ENG_DATA_FUELTANK, "eng_data_fueltank", ENG_INTERVAL},
+    {AT_DATA_OILTEMP, "at_data_oiltemp", AT_INTERVAL},
+    {ABS_DATA_OILLEVEL, "abs_data_oillevel", ABS_INTERVAL},
+    {BCM_DATA_CHARGESTATUS, "bcm_data_chargstatus", BCM_INTERVAL},
+    {BCM_DATA_BATTCURRENT, "bcm_data_battcurrent", BCM_INTERVAL},
+    {BCM_DATA_BATTSTATUS, "bcm_data_battstatus", BCM_INTERVAL},
+    {BCM_DATA_BATTVOLT, "bcm_data_battvolt", BCM_INTERVAL},
+    {BCM_DATA_DDA, "bcm_data_dda", BCM_INTERVAL},
+    {BCM_DATA_PDA, "bcm_data_pda", BCM_INTERVAL},
+    {BCM_DATA_RRDA, "bcm_data_rrda", BCM_INTERVAL},
+    {BCM_DATA_LRDA, "bcm_data_lrda", BCM_INTERVAL},
+    {BCM_DATA_SUNROOF, "bcm_data_sunroof", BCM_INTERVAL},
+    {BCM_DATA_PARKLAMP, "bcm_data_parklamp", BCM_INTERVAL},
+    {BCM_DATA_HEADLAMP, "bcm_data_headlamp", BCM_INTERVAL},
+    {BCM_DATA_HIGHBEAM, "bcm_data_highbeam", BCM_INTERVAL},
+    {BCM_DATA_HAZARD, "bcm_data_hazard", BCM_INTERVAL},
+    {BCM_DATA_FRONTFOG, "bcm_data_frontfog", BCM_INTERVAL},
+    {BCM_DATA_REARFOG, "bcm_data_rearfog", BCM_INTERVAL},
+    {BCM_DATA_LEFTTURN, "bcm_data_leftturn", BCM_INTERVAL},
+    {BCM_DATA_RIGHTTURN, "bcm_data_rightturn", BCM_INTERVAL},
+    {BCM_DATA_ODO, "bcm_data_odo", BCM_INTERVAL},
 };
 
 UpdateItem updateList[PID_SIZE];
