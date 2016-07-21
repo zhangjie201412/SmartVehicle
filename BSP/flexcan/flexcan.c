@@ -120,6 +120,7 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
     uint8_t i = 0, j = 0;
     uint16_t count = 0;
     uint8_t ret = 0;
+    uint8_t exception_count = 0;
 
     if(dir & DIR_INPUT) {
         flexcan_filter(rxId, rxId, rxId | 0x00ff, rxId | 0x00ff);
@@ -136,7 +137,8 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
     }
 
     if(dir & DIR_INPUT) {
-        for(i = 0; i < rxCount; i++) {
+        for(i = 0; i < rxCount; /*i++*/) {
+            count = 0;
             while((CAN_MessagePending(CAN1, CAN_FIFO0) < 1)
                     && (count < 0xffff)) {
                 count ++;
@@ -145,11 +147,25 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
             if(i < 0xffff) {
                 OSMutexPend(lock, 0, &err);
                 CAN_Receive(CAN1, CAN_FIFO0, &rxMsg);
-                printf("->recv %04x ", rxMsg->StdId);
-                for(i = 0; i < 8; i++) {
-                    printf("%02x ", rxMsg->Data[i]);
+                printf("->recv %04x ", rxMsg.StdId);
+                for(j = 0; j < 8; j++) {
+                    printf("%02x ", rxMsg.Data[j]);
                 }
                 printf("\r\n");
+                //check if the recv id is real rx id
+                if(rxMsg.StdId == rxId) {
+                    i ++;
+                } else {
+                    printf("exception!\r\n");
+                    exception_count ++;
+                    if(exception_count > 5) {
+                        ret = -1;
+                        OSMutexPost(lock);
+                        break;
+                    }
+                    OSMutexPost(lock);
+                    continue;
+                }
                 //write can msg
                 g_rxMsg[w_off].StdId = rxMsg.StdId;
                 g_rxMsg[w_off].DLC = rxMsg.DLC;

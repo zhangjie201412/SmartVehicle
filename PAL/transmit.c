@@ -108,11 +108,9 @@ void recv_callback(uint8_t *buf)
                     toyota_setup();
                 } else if(!strcmp(item->valuestring, "gm")) {
                     printf("->gm\r\n");
-                    toyota_setup();
-                    //gm_setup();
+                    gm_setup();
                 } else {
-                    toyota_setup();
-                    //fake_setup();
+                    fake_setup();
                 }
                 break;
 

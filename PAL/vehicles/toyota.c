@@ -529,6 +529,7 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     uint8_t offset;
     uint8_t l_bytes = 0;
     uint8_t l_packages = 0;
+    uint8_t sub_cmd = 0;
 
     CanTxMsg txMsg;
     CanRxMsg *rxMsg;
@@ -543,21 +544,38 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     txMsg.StdId = toyotaStdDs[pid].txId;
     txMsg.IDE = CAN_ID_STD;
     txMsg.DLC = toyotaStdDs[pid].len;
-//    printf("send-> ");
     for(i = 0; i < txMsg.DLC; i++) {
         txMsg.Data[i] = toyotaStdDs[pid].data[i];
-//        printf("%02x ", txMsg.Data[i]);
     }
-//    printf("\r\n");
     ret = flexcan_ioctl(DIR_BI, &txMsg, toyotaStdDs[pid].rxId, 1);
     if(ret > 0) {
         rxMsg = flexcan_dump();
-//        printf("recv-> ");
+        //check if the receive msg type is needed
+        if(txMsg.Data[0] > 10) {
+            data_type = 0x40 + txMsg.Data[2];
+            sub_cmd = txMsg.Data[3];
+        } else {
+            data_type = 0x40 + txMsg.Data[1];
+            sub_cmd = txMsg.Data[2];
+        }
         for(i = 0; i < 8; i++) {
             toyota_rx_buf[i] = rxMsg->Data[i];
-//            printf("%02x ", toyota_rx_buf[i]);
         }
-//        printf("\r\n");
+
+        //find the valid index
+        for(i = 0; i < 8; i++) {
+            if(toyota_rx_buf[i] == data_type) {
+                valid_index = i;
+                break;
+            }
+        }
+
+        if(sub_cmd != toyota_rx_buf[valid_index + 1]) {
+            printf("sub_cmd = %02x, valid_index = %d\r\n",
+                    sub_cmd, valid_index);
+            return NULL;
+        }
+
         //check if this recv package is a long package
         if(toyota_rx_buf[0] == 0x10) {
             l_bytes = toyota_rx_buf[1];
@@ -573,14 +591,11 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
             ret = flexcan_ioctl(DIR_BI, &toyota_continue_package,
                     toyotaStdDs[pid].rxId, l_packages);
             if(ret == l_packages) {
-//                printf("recv packages = %d\r\n", ret);
                 for(i = 0;i < ret; i++) {
                     rxMsg = flexcan_dump();
                     for(j = 0; j < 7; j++) {
                         toyota_rx_buf[6 + i * 7 + j] = rxMsg->Data[j + 1];
-//                        printf("%02x ", rxMsg->Data[j + 1]);
                     }
-//                    printf("\r\n");
                 }
             } else {
                 printf("error: ret = %d\r\n", ret);
@@ -588,10 +603,12 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
         }
         //short package
         else {
-            if(toyota_rx_buf[0] > 10) {
+            if(txMsg.Data[0] > 10) {
                 data_type = 0x40 + txMsg.Data[2];
+                sub_cmd = txMsg.Data[3];
             } else {
                 data_type = 0x40 + txMsg.Data[1];
+                sub_cmd = txMsg.Data[2];
             }
             //find the valid index
             for(i = 0; i < 8; i++) {
@@ -599,6 +616,11 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
                     valid_index = i;
                     break;
                 }
+            }
+            if(sub_cmd != toyota_rx_buf[valid_index + 1]) {
+                printf("sub_cmd = %02x, valid_index = %d\r\n",
+                        sub_cmd, valid_index);
+                return NULL;
             }
             //shift the valid data to head
             for(i = 0; i < 8; i++) {
