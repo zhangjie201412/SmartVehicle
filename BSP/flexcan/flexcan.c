@@ -128,6 +128,11 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
     }
     if(dir & DIR_OUTPUT) {
         flexcan_send_frame(txMsg);
+        printf("->send %04x ", txMsg->StdId);
+        for(i = 0; i < 8; i++) {
+            printf("%02x ", txMsg->Data[i]);
+        }
+        printf("\r\n");
     }
 
     if(dir & DIR_INPUT) {
@@ -140,6 +145,11 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
             if(i < 0xffff) {
                 OSMutexPend(lock, 0, &err);
                 CAN_Receive(CAN1, CAN_FIFO0, &rxMsg);
+                printf("->recv %04x ", rxMsg->StdId);
+                for(i = 0; i < 8; i++) {
+                    printf("%02x ", rxMsg->Data[i]);
+                }
+                printf("\r\n");
                 //write can msg
                 g_rxMsg[w_off].StdId = rxMsg.StdId;
                 g_rxMsg[w_off].DLC = rxMsg.DLC;

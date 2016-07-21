@@ -185,28 +185,28 @@ PidSupportItem toyotaSupportItems[PID_SIZE] =
     {ENG_DATA_OILLIFE, UNSUPPORTED},
     {ENG_DATA_OILTEMP, SUPPORTED},
     {ENG_DATA_FUEL, UNSUPPORTED},
-	{ENG_DATA_FUELLEVEL, SUPPORTED},
-	{ENG_DATA_FUELTANK, UNSUPPORTED},
-	{AT_DATA_OILTEMP, SUPPORTED},
-	{ABS_DATA_OILLEVEL, UNSUPPORTED},
-	{BCM_DATA_CHARGESTATUS, UNSUPPORTED},
-	{BCM_DATA_BATTCURRENT, UNSUPPORTED},
-	{BCM_DATA_BATTSTATUS, UNSUPPORTED},
-	{BCM_DATA_BATTVOLT, SUPPORTED},
-	{BCM_DATA_DDA, SUPPORTED},
-	{BCM_DATA_PDA, SUPPORTED},
-	{BCM_DATA_RRDA, SUPPORTED},
-	{BCM_DATA_LRDA, SUPPORTED},
-	{BCM_DATA_SUNROOF, UNSUPPORTED},
-	{BCM_DATA_PARKLAMP, UNSUPPORTED},
-	{BCM_DATA_HEADLAMP, UNSUPPORTED},
-	{BCM_DATA_HIGHBEAM, UNSUPPORTED},
-	{BCM_DATA_HAZARD, SUPPORTED},
-	{BCM_DATA_FRONTFOG, SUPPORTED},
-	{BCM_DATA_REARFOG, SUPPORTED},
-	{BCM_DATA_LEFTTURN, SUPPORTED},
-	{BCM_DATA_RIGHTTURN, SUPPORTED},
-	{BCM_DATA_ODO, SUPPORTED},
+    {ENG_DATA_FUELLEVEL, SUPPORTED},
+    {ENG_DATA_FUELTANK, UNSUPPORTED},
+    {AT_DATA_OILTEMP, SUPPORTED},
+    {ABS_DATA_OILLEVEL, UNSUPPORTED},
+    {BCM_DATA_CHARGESTATUS, UNSUPPORTED},
+    {BCM_DATA_BATTCURRENT, UNSUPPORTED},
+    {BCM_DATA_BATTSTATUS, UNSUPPORTED},
+    {BCM_DATA_BATTVOLT, SUPPORTED},
+    {BCM_DATA_DDA, SUPPORTED},
+    {BCM_DATA_PDA, SUPPORTED},
+    {BCM_DATA_RRDA, SUPPORTED},
+    {BCM_DATA_LRDA, SUPPORTED},
+    {BCM_DATA_SUNROOF, UNSUPPORTED},
+    {BCM_DATA_PARKLAMP, UNSUPPORTED},
+    {BCM_DATA_HEADLAMP, UNSUPPORTED},
+    {BCM_DATA_HIGHBEAM, UNSUPPORTED},
+    {BCM_DATA_HAZARD, SUPPORTED},
+    {BCM_DATA_FRONTFOG, SUPPORTED},
+    {BCM_DATA_REARFOG, SUPPORTED},
+    {BCM_DATA_LEFTTURN, SUPPORTED},
+    {BCM_DATA_RIGHTTURN, SUPPORTED},
+    {BCM_DATA_ODO, SUPPORTED},
 };
 
 StdDataStream toyotaStdDs[PID_SIZE] =
@@ -361,8 +361,8 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     //MAF
     {
         ENG_DATA_MAF, 0X7e0, 8,
-        {0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7e8, 3, 2,
+        {0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7e8, 5, 1,
     },
     //OILLIFE
     {
@@ -394,19 +394,19 @@ StdDataStream toyotaStdDs[PID_SIZE] =
         {0x02, 0x21, 0x82, 0x00, 0x00, 0x00, 0x00, 0x00},
         0x7b8, 2, 2,
     },
-	//ABS_DATA_OILLEVEL
+    //ABS_DATA_OILLEVEL
     {
         ABS_DATA_OILLEVEL, 0X7b0, 8,
     },
-	//BCM_DATA_CHARGESTATUS
+    //BCM_DATA_CHARGESTATUS
     {
         BCM_DATA_CHARGESTATUS, 0X7b0, 8,
     },
-	//BCM_DATA_BATTCURRENT
+    //BCM_DATA_BATTCURRENT
     {
         BCM_DATA_BATTCURRENT, 0X7b0, 8,
     },
-	//BCM_DATA_BATTSTATUS
+    //BCM_DATA_BATTSTATUS
     {
         BCM_DATA_BATTSTATUS, 0X7b0, 8,
     },
@@ -443,6 +443,10 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     //BCM_DATA_SUNROOF
     {
         BCM_DATA_SUNROOF, 0X750, 8,
+    },
+    //BCM_DATA_PARKLAMP
+    {
+        BCM_DATA_PARKLAMP, 0X750, 8,
     },
     //BCM_DATA_HEADLAMP
     {
@@ -533,26 +537,27 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     if(toyotaSupportItems[pid].support != SUPPORTED)
         return NULL;
 
+    printf("pid: %s\r\n", getPidKey(pid));
     valid_len = toyotaStdDs[pid].valid_len;
     offset = toyotaStdDs[pid].offset;
     txMsg.StdId = toyotaStdDs[pid].txId;
     txMsg.IDE = CAN_ID_STD;
     txMsg.DLC = toyotaStdDs[pid].len;
-    printf("send-> ");
+//    printf("send-> ");
     for(i = 0; i < txMsg.DLC; i++) {
         txMsg.Data[i] = toyotaStdDs[pid].data[i];
-        printf("%02x ", txMsg.Data[i]);
+//        printf("%02x ", txMsg.Data[i]);
     }
-    printf("\r\n");
+//    printf("\r\n");
     ret = flexcan_ioctl(DIR_BI, &txMsg, toyotaStdDs[pid].rxId, 1);
     if(ret > 0) {
         rxMsg = flexcan_dump();
-        printf("recv-> ");
+//        printf("recv-> ");
         for(i = 0; i < 8; i++) {
             toyota_rx_buf[i] = rxMsg->Data[i];
-            printf("%02x ", toyota_rx_buf[i]);
+//            printf("%02x ", toyota_rx_buf[i]);
         }
-        printf("\r\n");
+//        printf("\r\n");
         //check if this recv package is a long package
         if(toyota_rx_buf[0] == 0x10) {
             l_bytes = toyota_rx_buf[1];
@@ -568,14 +573,14 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
             ret = flexcan_ioctl(DIR_BI, &toyota_continue_package,
                     toyotaStdDs[pid].rxId, l_packages);
             if(ret == l_packages) {
-                printf("recv packages = %d\r\n", ret);
+//                printf("recv packages = %d\r\n", ret);
                 for(i = 0;i < ret; i++) {
                     rxMsg = flexcan_dump();
                     for(j = 0; j < 7; j++) {
                         toyota_rx_buf[6 + i * 7 + j] = rxMsg->Data[j + 1];
-                        printf("%02x ", rxMsg->Data[j + 1]);
+//                        printf("%02x ", rxMsg->Data[j + 1]);
                     }
-                    printf("\r\n");
+//                    printf("\r\n");
                 }
             } else {
                 printf("error: ret = %d\r\n", ret);
