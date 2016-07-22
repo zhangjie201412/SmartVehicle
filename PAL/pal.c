@@ -95,15 +95,15 @@ void pal_init(void)
 
     //create mailbox
     mPal.mailbox = OSMboxCreate((void *)0);
-    
+
     transmit_init();
     iwdg_init(IWDG_Prescaler_256, 0xfff);
     OSTaskCreate(transmit_thread, (void *)0,
             &transmitTaskStk[TRANSMIT_TASK_STK_SIZE - 1],
             TRANSMIT_TASK_PRIO);
-//    OSTaskCreate(immolock_thread, (void *)0,
-//            &immolockTaskStk[IMMOLOCK_TASK_STK_SIZE - 1],
-//            IMMOLOCK_TASK_PRIO);
+    OSTaskCreate(immolock_thread, (void *)0,
+            &immolockTaskStk[IMMOLOCK_TASK_STK_SIZE - 1],
+            IMMOLOCK_TASK_PRIO);
     OSTaskCreate(upload_thread, (void *)0,
             &uploadTaskStk[UPLOAD_TASK_STK_SIZE - 1],
             UPLOAD_TASK_PRIO);
@@ -139,7 +139,7 @@ static void immolock_thread(void *parg)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE); 
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 |GPIO_Pin_14;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;

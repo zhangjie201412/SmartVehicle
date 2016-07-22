@@ -183,8 +183,10 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
                 break;
             }
         }
-    } else {
     }
+
+    //filter none of can id
+    flexcan_filter(0x00, 0x00, 0x00ff, 0x00ff);
 
     return ret;
 }
