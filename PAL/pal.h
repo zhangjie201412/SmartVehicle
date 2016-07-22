@@ -4,6 +4,7 @@
 #include "includes.h"
 
 #define NAME_MAX_SIZE       32
+#define FAULT_CODE_MAX_SIZE 10
 #define SUPPORTED           1
 #define UNSUPPORTED         0
 
@@ -54,7 +55,8 @@ typedef enum {
     //31~40
     ENG_DATA_FUELLEVEL,
     ENG_DATA_FUELTANK,
-    AT_DATA_OILTEMP,
+    ENG_DATA_SIZE,
+    AT_DATA_OILTEMP = ENG_DATA_SIZE,
     ABS_DATA_OILLEVEL,
     BCM_DATA_CHARGESTATUS,
     BCM_DATA_BATTCURRENT,
@@ -80,6 +82,20 @@ typedef enum {
     PID_SIZE,
 } EnumPidType;
 
+typedef enum {
+    FAULT_ENGINE_CODE,
+    FAULT_AT_CODE,
+    FAULT_ABS_CODE,
+    FAULT_SRS_CODE,
+    FAULT_BCM_CODE,
+    FAULT_IPC_CODE,
+    FAULT_EPS_CODE,
+    FAULT_AC_CODE,
+    FAULT_TPMS_CODE,
+    //the last one
+    FAULT_CODE_SIZE,
+} EnumFaultCodeType;
+
 typedef struct {
     uint8_t vehicle_type;
     uint8_t capability[CONTROL_END];
@@ -90,6 +106,16 @@ typedef struct {
     char key[NAME_MAX_SIZE];
     uint8_t interval;
 } PidItem;
+
+typedef struct {
+    uint8_t fault_code;
+    char key[NAME_MAX_SIZE];
+} FaultCodeItem;
+
+typedef struct {
+    uint8_t fault_code;
+    int code[FAULT_CODE_MAX_SIZE];
+} FaultCodeValue;
 
 typedef struct {
     uint8_t pid;
@@ -111,19 +137,13 @@ typedef struct {
     void (*control_sunfloor)(uint8_t state);
     void (*control_trunk)(uint8_t state);
     void (*control_findcar)(uint8_t state);
+    void (*clear_fault_code)(void);
 } DevCtrlOps;
 
 typedef struct {
+    uint8_t (*is_engine_on)(void);
     uint8_t *(*transfer_data_stream)(uint8_t pid, uint8_t *len);
 } DevUploadOps;
-
-typedef struct {
-    uint8_t eng_interval;
-    uint8_t at_interval;
-    uint8_t abs_interval;
-    uint8_t bcm_interval;
-    uint8_t ipc_interval;
-} DevUploadParam;
 
 typedef struct {
     uint8_t pid;

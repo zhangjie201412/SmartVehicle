@@ -11,5 +11,7 @@ void toyota_ctrl_trunk(uint8_t state);
 void toyota_ctrl_findcar(uint8_t state);
 void toyota_keepalive(void);
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len);
+uint8_t toyota_engine_on(void);
+void toyota_clear_fault_code(void);
 
 #endif

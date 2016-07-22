@@ -1,6 +1,8 @@
 #ifndef __FLEXCAN_H__
 #define __FLEXCAN_H__
 
+#define FLEXCAN_DEBUG               1
+
 #define CAN_500K                    4
 #define CAN_250K                    8
 #define CAN_125K                    16

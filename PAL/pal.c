@@ -82,6 +82,19 @@ PidItem pidList[PID_SIZE] =
 
 UpdateItem updateList[PID_SIZE];
 
+FaultCodeItem faultCodeList[FAULT_CODE_SIZE] =
+{
+    {FAULT_ENGINE_CODE, "eng_code"},
+    {FAULT_AT_CODE, "at_code"},
+    {FAULT_ABS_CODE, "abs_code"},
+    {FAULT_SRS_CODE, "srs_code"},
+    {FAULT_BCM_CODE, "bcm_code"},
+    {FAULT_IPC_CODE, "ipc_code"},
+    {FAULT_EPS_CODE, "eps_code"},
+    {FAULT_AC_CODE, "ac_code"},
+    {FAULT_TPMS_CODE, "tpms_code"},
+};
+
 static void transmit_thread(void *parg);
 static void immolock_thread(void *parg);
 static void upload_thread(void *unused);
@@ -101,9 +114,9 @@ void pal_init(void)
     OSTaskCreate(transmit_thread, (void *)0,
             &transmitTaskStk[TRANSMIT_TASK_STK_SIZE - 1],
             TRANSMIT_TASK_PRIO);
-    OSTaskCreate(immolock_thread, (void *)0,
-            &immolockTaskStk[IMMOLOCK_TASK_STK_SIZE - 1],
-            IMMOLOCK_TASK_PRIO);
+//    OSTaskCreate(immolock_thread, (void *)0,
+//            &immolockTaskStk[IMMOLOCK_TASK_STK_SIZE - 1],
+//            IMMOLOCK_TASK_PRIO);
     OSTaskCreate(upload_thread, (void *)0,
             &uploadTaskStk[UPLOAD_TASK_STK_SIZE - 1],
             UPLOAD_TASK_PRIO);
@@ -249,6 +262,8 @@ void upload_thread(void *unused)
     uint8_t i = 0, j;
     uint8_t *data;
     uint8_t len;
+    uint8_t engine_on = TRUE;
+    uint8_t last_engine_on = FALSE;
 
     unused = unused;
     //main thread for upload vehicle data
@@ -257,10 +272,27 @@ void upload_thread(void *unused)
         if(!isConnected())
             continue;
 
+        //check is engine on
+        if(mPal.uploadOps->is_engine_on) {
+            engine_on = mPal.uploadOps->is_engine_on();
+        }
+
+
         for(i = 0; i < PID_SIZE; i++) {
-            data = mPal.uploadOps->transfer_data_stream(i, &len);
-            if(data == NULL)
+            //if engine is off, skip upload engine related pids
+            if(!engine_on) {
+                i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
+            }
+            //check the ops pointer
+            if(mPal.uploadOps->transfer_data_stream == NULL) {
+                printf("transfer_data_stream is NULL");
                 continue;
+            }
+
+            data = mPal.uploadOps->transfer_data_stream(i, &len);
+            if(data == NULL) {
+                continue;
+            }
 
             for(j = 0; j < len; j++) {
                 printf("%d(%02x) ", data[j], data[j]);

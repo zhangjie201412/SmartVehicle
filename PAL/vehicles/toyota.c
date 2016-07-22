@@ -9,7 +9,7 @@ __IO uint8_t toyota_rx_buf[128];
 DevCtrlOps toyota_ops;
 DevUploadOps toyota_upload_ops;
 
-CanTxMsg toyota_lamp_on = 
+CanTxMsg toyota_lamp_on =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -17,7 +17,7 @@ CanTxMsg toyota_lamp_on =
     0x40, 0x06, 0x30, 0x15, 0xff, 0x20, 0x00, 0x00
 };
 
-CanTxMsg toyota_lamp_off = 
+CanTxMsg toyota_lamp_off =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -25,7 +25,7 @@ CanTxMsg toyota_lamp_off =
     0x40, 0x06, 0x30, 0x15, 0x00, 0x00, 0x00, 0x00
 };
 
-CanTxMsg toyota_door_on = 
+CanTxMsg toyota_door_on =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -33,7 +33,7 @@ CanTxMsg toyota_door_on =
     0x40, 0x05, 0x30, 0x11, 0x00, 0x80, 0x00, 0x00
 };
 
-CanTxMsg toyota_door_off = 
+CanTxMsg toyota_door_off =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -41,7 +41,7 @@ CanTxMsg toyota_door_off =
     0x40, 0x05, 0x30, 0x11, 0x00, 0x40, 0x00, 0x00
 };
 
-CanTxMsg toyota_trunk_on = 
+CanTxMsg toyota_trunk_on =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -49,7 +49,7 @@ CanTxMsg toyota_trunk_on =
     0x40, 0x05, 0x30, 0x11, 0xff, 0x00, 0x80, 0x00
 };
 
-CanTxMsg toyota_trunk_off = 
+CanTxMsg toyota_trunk_off =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -57,7 +57,7 @@ CanTxMsg toyota_trunk_off =
     0x40, 0x05, 0x30, 0x11, 0xff, 0x00, 0x00, 0x00
 };
 
-CanTxMsg toyota_sunfloor_on = 
+CanTxMsg toyota_sunfloor_on =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -65,7 +65,7 @@ CanTxMsg toyota_sunfloor_on =
     0xad, 0x04, 0x30, 0x01, 0x01, 0x40, 0x00, 0x00
 };
 
-CanTxMsg toyota_sunfloor_off = 
+CanTxMsg toyota_sunfloor_off =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -73,7 +73,7 @@ CanTxMsg toyota_sunfloor_off =
     0xad, 0x04, 0x30, 0x01, 0x01, 0x80, 0x00, 0x00
 };
 
-CanTxMsg toyota_window_on[4] = 
+CanTxMsg toyota_window_on[4] =
 {
     {
         0x750, 0x18db33f1,
@@ -101,7 +101,7 @@ CanTxMsg toyota_window_on[4] =
     },
 };
 
-CanTxMsg toyota_window_off[4] = 
+CanTxMsg toyota_window_off[4] =
 {
     {
         0x750, 0x18db33f1,
@@ -129,7 +129,7 @@ CanTxMsg toyota_window_off[4] =
     },
 };
 
-CanTxMsg toyota_keepalive_normal = 
+CanTxMsg toyota_keepalive_normal =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -137,7 +137,7 @@ CanTxMsg toyota_keepalive_normal =
     0x40, 0x01, 0x3e, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-CanTxMsg toyota_keepalive_door = 
+CanTxMsg toyota_keepalive_door =
 {
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -513,10 +513,19 @@ void toyota_setup(void)
     toyota_ops.control_light = toyota_ctrl_light;
     toyota_ops.control_findcar = toyota_ctrl_findcar;
     toyota_ops.control_trunk = toyota_ctrl_trunk;
+    toyota_ops.clear_fault_code = toyota_clear_fault_code;
 
     pal->ops = &toyota_ops;
     toyota_upload_ops.transfer_data_stream = toyota_data_stream;
+    toyota_upload_ops.is_engine_on = toyota_engine_on;
     pal->uploadOps = &toyota_upload_ops;
+}
+
+uint8_t toyota_engine_on(void)
+{
+    uint8_t on = TRUE;
+
+    return on;
 }
 
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
@@ -535,8 +544,9 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     CanRxMsg *rxMsg;
 
     //check if this pid supported
-    if(toyotaSupportItems[pid].support != SUPPORTED)
+    if(toyotaSupportItems[pid].support != SUPPORTED) {
         return NULL;
+    }
 
     printf("pid: %s\r\n", getPidKey(pid));
     valid_len = toyotaStdDs[pid].valid_len;
@@ -571,7 +581,7 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
         }
 
         if(sub_cmd != toyota_rx_buf[valid_index + 1]) {
-            printf("sub_cmd = %02x, valid_index = %d\r\n",
+            printf("ERROR: sub_cmd = %02x, valid_index = %d\r\n",
                     sub_cmd, valid_index);
             return NULL;
         }
@@ -701,3 +711,7 @@ void toyota_ctrl_findcar(uint8_t state)
     printf("-> %s\r\n", __func__);
 }
 
+void toyota_clear_fault_code(void)
+{
+    printf("-> %s\r\n", __func__);
+}

@@ -11,4 +11,6 @@ void gm_ctrl_trunk(uint8_t state);
 void gm_ctrl_findcar(uint8_t state);
 uint8_t* fake_data_stream(uint8_t pid, uint8_t *len);
 
+uint8_t gm_engine_on(void);
+void gm_clear_fault_code(void);
 #endif

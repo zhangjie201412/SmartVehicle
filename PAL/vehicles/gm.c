@@ -221,9 +221,7 @@ CanTxMsg gm_findcar_off[2] = {
 	},
 };
 
-
-
-CanTxMsg gm_keepalive = 
+CanTxMsg gm_keepalive =
 {
     0x241, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -243,11 +241,20 @@ void gm_setup(void)
     gm_ops.control_light = gm_ctrl_light;
     gm_ops.control_findcar = gm_ctrl_findcar;
     gm_ops.control_trunk = gm_ctrl_trunk;
+    gm_ops.clear_fault_code = gm_clear_fault_code;
 
     //use fake ebod
     gm_upload_ops.transfer_data_stream = fake_data_stream;
+    gm_upload_ops.is_engine_on = gm_engine_on;
     pal->ops = &gm_ops;
     pal->uploadOps = &gm_upload_ops;
+}
+
+uint8_t fake_engine_on(void)
+{
+    uint8_t on = TRUE;
+
+    return on;
 }
 
 void gm_ctrl_window(uint8_t state)
@@ -354,6 +361,10 @@ void gm_ctrl_findcar(uint8_t state)
             OSTimeDlyHMSM(0, 0, 0, 200);
         }
     }
-    flexcan_send_frame(&gm_keepalive);    
+    flexcan_send_frame(&gm_keepalive);
 }
 
+void gm_clear_fault_code(void)
+{
+    printf("-> %s\r\n", __func__);
+}
