@@ -250,7 +250,7 @@ void gm_setup(void)
     pal->uploadOps = &gm_upload_ops;
 }
 
-uint8_t fake_engine_on(void)
+uint8_t gm_engine_on(void)
 {
     uint8_t on = TRUE;
 
