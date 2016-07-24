@@ -170,6 +170,7 @@ void pal_init(void);
 void pal_do_bcm(uint8_t id, uint8_t val, uint32_t cmd_id);
 void immolock(uint8_t state);
 void set_immo_state(uint8_t state);
+uint8_t check_engine(void);
 
 const char *getPidKey(uint8_t pid);
 void getDeviceId(void);

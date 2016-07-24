@@ -241,27 +241,27 @@ PidSupportItem gmSupportItems[PID_SIZE] =
     {ENG_DATA_LOAD, SUPPORTED},
     {ENG_DATA_LTFT, SUPPORTED},
     {ENG_DATA_STFT, SUPPORTED},
-    {ENG_DATA_MISFIRE1, UNSUPPORTED},
-    {ENG_DATA_MISFIRE2, UNSUPPORTED},
-    {ENG_DATA_MISFIRE3, UNSUPPORTED},
-    {ENG_DATA_MISFIRE4, UNSUPPORTED},
-    {ENG_DATA_MISFIRE5, UNSUPPORTED},
-    {ENG_DATA_MISFIRE6, UNSUPPORTED},
-    {ENG_DATA_FCLS, UNSUPPORTED},
-    {ENG_DATA_KEYSTATUS, UNSUPPORTED},
-    {ENG_DATA_HO2S1, UNSUPPORTED},
-    {ENG_DATA_HO2S2, UNSUPPORTED},
-    {ENG_DATA_MAP, UNSUPPORTED},
-    {ENG_DATA_INJECTPULSE, UNSUPPORTED},
-    {ENG_DATA_OILPRESSURE, UNSUPPORTED},
-    {ENG_DATA_OILLEVELSTATUS, UNSUPPORTED},
-    {ENG_DATA_AF, UNSUPPORTED},
-    {ENG_DATA_IGTIMING, UNSUPPORTED},
-    {ENG_DATA_MAF, UNSUPPORTED},
-    {ENG_DATA_OILLIFE, UNSUPPORTED},
-    {ENG_DATA_OILTEMP, UNSUPPORTED},
-    {ENG_DATA_FUEL, UNSUPPORTED},
-    {ENG_DATA_FUELLEVEL, UNSUPPORTED},
+    {ENG_DATA_MISFIRE1, SUPPORTED},
+    {ENG_DATA_MISFIRE2, SUPPORTED},
+    {ENG_DATA_MISFIRE3, SUPPORTED},
+    {ENG_DATA_MISFIRE4, SUPPORTED},
+    {ENG_DATA_MISFIRE5, SUPPORTED},
+    {ENG_DATA_MISFIRE6, SUPPORTED},
+    {ENG_DATA_FCLS, SUPPORTED},
+    {ENG_DATA_KEYSTATUS, SUPPORTED},
+    {ENG_DATA_HO2S1, SUPPORTED},
+    {ENG_DATA_HO2S2, SUPPORTED},
+    {ENG_DATA_MAP, SUPPORTED},
+    {ENG_DATA_INJECTPULSE, SUPPORTED},
+    {ENG_DATA_OILPRESSURE, SUPPORTED},
+    {ENG_DATA_OILLEVELSTATUS, SUPPORTED},
+    {ENG_DATA_AF, SUPPORTED},
+    {ENG_DATA_IGTIMING, SUPPORTED},
+    {ENG_DATA_MAF, SUPPORTED},
+    {ENG_DATA_OILLIFE, SUPPORTED},
+    {ENG_DATA_OILTEMP, SUPPORTED},
+    {ENG_DATA_FUEL, SUPPORTED},
+    {ENG_DATA_FUELLEVEL, SUPPORTED},
     {ENG_DATA_FUELTANK, UNSUPPORTED},
     {AT_DATA_OILTEMP, UNSUPPORTED},
     {ABS_DATA_OILLEVEL, UNSUPPORTED},
@@ -391,6 +391,216 @@ GmDataStream gmDataStream[PID_SIZE] =
         1,
         1,
     },
+    //ENG_DATA_MISFIRE1
+    {
+        ENG_DATA_MISFIRE1,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x12, 0x06, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MISFIRE2
+    {
+        ENG_DATA_MISFIRE2,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x12, 0x05, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MISFIRE3
+    {
+        ENG_DATA_MISFIRE3,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x12, 0x07, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MISFIRE4
+    {
+        ENG_DATA_MISFIRE4,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x12, 0x08, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MISFIRE5
+    {
+        ENG_DATA_MISFIRE5,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x11, 0xea, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MISFIRE6
+    {
+        ENG_DATA_MISFIRE6,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x11, 0xeb, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_FCLS
+    {
+        ENG_DATA_FCLS,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x11, 0x31, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_KEYSTATUS
+    {
+        ENG_DATA_KEYSTATUS,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x20, 0x7e, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_HO2S1
+    {
+        ENG_DATA_HO2S1,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x23, 0x20, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_HO2S2
+    {
+        ENG_DATA_HO2S2,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x23, 0x21, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MAP
+    {
+        ENG_DATA_MAP,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x20, 0x8a, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        2,
+    },
+    //ENG_DATA_INJECTPULSE
+    {
+        ENG_DATA_INJECTPULSE,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x12, 0xc3, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        2,
+    },
+    //ENG_DATA_OILPRESSURE
+    {
+        ENG_DATA_OILPRESSURE,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x11, 0x27, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_OILLEVELSTATUS
+    {
+        ENG_DATA_OILLEVELSTATUS,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x11, 0x27, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_AF
+    {
+        ENG_DATA_AF,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x00, 0x44, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        2,
+    },
+    //ENG_DATA_IGTIMING
+    {
+        ENG_DATA_IGTIMING,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x00, 0x0e, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_MAF
+    {
+        ENG_DATA_MAF,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x00, 0x10, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        2,
+    },
+    //ENG_DATA_OILLIFE
+    {
+        ENG_DATA_OILLIFE,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x02, 0x1a, 0x6d, 0x00, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        3,
+        1,
+    },
+    //ENG_DATA_OILTEMP
+    {
+        ENG_DATA_OILTEMP,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x11, 0x54, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_FUEL
+    {
+        ENG_DATA_FUEL,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x19, 0x40, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ENG_DATA_FUELLEVEL
+    {
+        ENG_DATA_FUELLEVEL,
+        0x7e0,
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x13, 0x2a, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        2,
+    },
 };
 
 CanTxMsg gm_keepalive =
@@ -426,9 +636,7 @@ void gm_setup(void)
 
 uint8_t gm_engine_on(void)
 {
-    uint8_t on = TRUE;
-
-    return on;
+    return check_engine();
 }
 
 uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)

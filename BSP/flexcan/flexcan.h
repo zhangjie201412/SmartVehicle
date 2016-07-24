@@ -15,6 +15,7 @@
 #define flexcan_rx_callack			USB_LP_CAN_RX0_IRQHandler
 
 #define RX_PACKAGE_SIZE             32
+#define FLEXCAN_TIMEOUT             2
 
 enum {
     DIR_INPUT = 1,

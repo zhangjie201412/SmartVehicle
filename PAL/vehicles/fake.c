@@ -267,9 +267,7 @@ void fake_setup(void)
 
 uint8_t fake_engine_on(void)
 {
-    uint8_t on = TRUE;
-
-    return on;
+    return check_engine();
 }
 
 uint8_t* fake_data_stream(uint8_t pid, uint8_t *len)

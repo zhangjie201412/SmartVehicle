@@ -494,7 +494,6 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     },
 };
 
-
 void toyota_keepalive(void)
 {
     flexcan_send_frame(&toyota_keepalive_normal);
@@ -523,9 +522,7 @@ void toyota_setup(void)
 
 uint8_t toyota_engine_on(void)
 {
-    uint8_t on = TRUE;
-
-    return on;
+    return check_engine();
 }
 
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)

@@ -95,6 +95,14 @@ FaultCodeItem faultCodeList[FAULT_CODE_SIZE] =
     {FAULT_TPMS_CODE, "tpms_code"},
 };
 
+CanTxMsg engineAlive =
+{
+    0x7df, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x02, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
 static void transmit_thread(void *parg);
 static void immolock_thread(void *parg);
 static void upload_thread(void *unused);
@@ -255,6 +263,30 @@ void upload_server(void)
             clear_item(i);
         }
     }
+}
+
+uint8_t check_engine(void)
+{
+    CanRxMsg *rxMsg;
+    uint8_t ret = -1;
+    uint8_t on = FALSE;
+
+    ret = flexcan_ioctl(DIR_BI, &engineAlive,
+            0x7e8, 1);
+    if(ret > 0) {
+        rxMsg = flexcan_dump();
+        //check if the receive msg type is needed
+        //TODO: ???
+        if(rxMsg == NULL) {
+            on = FALSE;
+        } else {
+            on = TRUE;
+        }
+    } else {
+        on = FALSE;
+    }
+
+    return on;
 }
 
 void upload_thread(void *unused)

@@ -158,7 +158,7 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
     if(dir & DIR_INPUT) {
         for(i = 0; i < rxCount; /*i++*/) {
             rxMsg = (CanRxMsg *)OSMboxPend(mailbox,
-                    4 * OS_TICKS_PER_SEC, &err);
+                    FLEXCAN_TIMEOUT * OS_TICKS_PER_SEC, &err);
             if(err != OS_ERR_TIMEOUT) {
                 OSMutexPend(lock, 0, &err);
 #ifdef FLEXCAN_DEBUG
