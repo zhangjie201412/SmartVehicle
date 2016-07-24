@@ -75,7 +75,7 @@ void flexcan_filter(u32 id1, u32 id2, u32 mid1, u32 mid2)
     CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_FIFO0;
     CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;
     CAN_FilterInit(&CAN_FilterInitStructure);
-    CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
+    //CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
 }
 
 void flexcan_can_enable(void)
@@ -123,7 +123,7 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
     uint8_t exception_count = 0;
 
     if(dir & DIR_INPUT) {
-        flexcan_filter(rxId, rxId, rxId | 0x00ff, rxId | 0x00ff);
+        flexcan_filter(rxId, rxId, rxId | 0xff, rxId | 0xff);
     } else {
         flexcan_filter(0x00, 0x00, 0x00ff, 0x00ff);
     }
@@ -203,7 +203,6 @@ uint8_t flexcan_count(void)
         return RX_PACKAGE_SIZE - r_off + w_off;
 }
 
-
 CanRxMsg *flexcan_dump(void)
 {
     CanRxMsg *msg = NULL;
@@ -221,6 +220,15 @@ CanRxMsg *flexcan_dump(void)
     OSMutexPost(lock);
 
     return msg;
+}
+
+void flexcan_reset(void)
+{
+    INT8U err;
+    OSMutexPend(lock, 0, &err);
+    w_off = 0;
+    r_off = 0;
+    OSMutexPost(lock);
 }
 
 void flexcan_rx_callack(void)

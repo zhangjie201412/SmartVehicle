@@ -29,5 +29,5 @@ void flexcan_send_frame(CanTxMsg *txMsg);
 void flexcan_can_enable(void);
 uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount);
 CanRxMsg *flexcan_dump(void);
-
+void flexcan_reset(void);
 #endif

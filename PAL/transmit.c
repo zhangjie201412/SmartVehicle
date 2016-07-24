@@ -31,6 +31,7 @@ void transmit_init(void)
     sim900_init();
     //connect the server
     sim900_connect();
+//    gm_setup();
     //register callback
     sim900_register_recv(recv_callback);
     //run heart beat thread
