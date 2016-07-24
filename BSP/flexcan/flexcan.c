@@ -6,7 +6,22 @@
 
 static __IO CanRxMsg g_rxMsg[RX_PACKAGE_SIZE];
 static __IO uint8_t w_off, r_off;
+static __IO CanRxMsg m_rxMsg;
 OS_EVENT *lock;
+OS_EVENT *mailbox;
+
+void flexcan_nvic_init(void)
+{
+	NVIC_InitTypeDef  NVIC_InitStructure;
+	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
+	
+	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
+}
 
 void flexcan_init(u8 velocity)
 {
@@ -15,6 +30,7 @@ void flexcan_init(u8 velocity)
 
     //init for can
     flexcan_can_enable();
+    flexcan_nvic_init();
     flexcan_gpio_init();
 
     CAN_DeInit(CAN1);
@@ -35,6 +51,7 @@ void flexcan_init(u8 velocity)
     w_off = 0;
     r_off = 0;
     lock = OSMutexCreate(1, &err);
+    mailbox = OSMboxCreate((void *)0);
 }
 
 void flexcan_gpio_init(void)
@@ -75,7 +92,7 @@ void flexcan_filter(u32 id1, u32 id2, u32 mid1, u32 mid2)
     CAN_FilterInitStructure.CAN_FilterFIFOAssignment=CAN_FIFO0;
     CAN_FilterInitStructure.CAN_FilterActivation=ENABLE;
     CAN_FilterInit(&CAN_FilterInitStructure);
-    //CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
+    CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
 }
 
 void flexcan_can_enable(void)
@@ -115,7 +132,7 @@ void flexcan_send_frame(CanTxMsg *txMsg)
 
 uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount)
 {
-    CanRxMsg rxMsg;
+    CanRxMsg *rxMsg;
     INT8U err;
     uint8_t i = 0, j = 0;
     uint16_t count = 0;
@@ -140,24 +157,19 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
 
     if(dir & DIR_INPUT) {
         for(i = 0; i < rxCount; /*i++*/) {
-            count = 0;
-            while((CAN_MessagePending(CAN1, CAN_FIFO0) < 1)
-                    && (count < 0xffff)) {
-                count ++;
-            }
-
-            if(i < 0xffff) {
+            rxMsg = (CanRxMsg *)OSMboxPend(mailbox,
+                    4 * OS_TICKS_PER_SEC, &err);
+            if(err != OS_ERR_TIMEOUT) {
                 OSMutexPend(lock, 0, &err);
-                CAN_Receive(CAN1, CAN_FIFO0, &rxMsg);
 #ifdef FLEXCAN_DEBUG
-                printf("->recv %04x ", rxMsg.StdId);
+                printf("->recv %04x ", rxMsg->StdId);
                 for(j = 0; j < 8; j++) {
-                    printf("%02x ", rxMsg.Data[j]);
+                    printf("%02x ", rxMsg->Data[j]);
                 }
                 printf("\r\n");
 #endif
                 //check if the recv id is real rx id
-                if(rxMsg.StdId == rxId) {
+                if(rxMsg->StdId == rxId) {
                     i ++;
                 } else {
                     printf("exception!\r\n");
@@ -171,10 +183,10 @@ uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCou
                     continue;
                 }
                 //write can msg
-                g_rxMsg[w_off].StdId = rxMsg.StdId;
-                g_rxMsg[w_off].DLC = rxMsg.DLC;
-                for(j = 0; j < rxMsg.DLC; j++) {
-                    g_rxMsg[w_off].Data[j] = rxMsg.Data[j];
+                g_rxMsg[w_off].StdId = rxMsg->StdId;
+                g_rxMsg[w_off].DLC = rxMsg->DLC;
+                for(j = 0; j < rxMsg->DLC; j++) {
+                    g_rxMsg[w_off].Data[j] = rxMsg->Data[j];
                 }
                 w_off ++;
                 if(w_off == RX_PACKAGE_SIZE) {
@@ -233,4 +245,6 @@ void flexcan_reset(void)
 
 void flexcan_rx_callack(void)
 {
+    CAN_Receive(CAN1, CAN_FIFO0, &m_rxMsg);
+    OSMboxPost(mailbox, &m_rxMsg);
 }

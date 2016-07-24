@@ -289,7 +289,7 @@ static void thread_sim900_rx_entry(void *parg)
             continue;
 
         while(rb_get(&rx_rb, &thischar, 1) == TRUE) {
-            printf("%c", thischar);
+//            printf("%c", thischar);
             if(status == STATUS_CONNECTED) {
                 if(thischar == '{') {
                     clear_rx_buf();
