@@ -273,7 +273,7 @@ uint8_t fake_engine_on(void)
 uint8_t* fake_data_stream(uint8_t pid, uint8_t *len)
 {
     uint8_t i;
-    uint8_t ret;
+    int8_t ret;
     uint8_t valid_len;
     uint8_t offset;
 

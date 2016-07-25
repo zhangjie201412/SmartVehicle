@@ -130,12 +130,11 @@ void flexcan_send_frame(CanTxMsg *txMsg)
     }
 }
 
-uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount)
+int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount)
 {
     CanRxMsg *rxMsg;
     INT8U err;
     uint8_t i = 0, j = 0;
-    uint16_t count = 0;
     uint8_t ret = 0;
     uint8_t exception_count = 0;
 

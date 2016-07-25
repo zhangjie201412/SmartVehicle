@@ -14,7 +14,7 @@
 #define CAN_PinRemap                DISABLE
 #define flexcan_rx_callack			USB_LP_CAN_RX0_IRQHandler
 
-#define RX_PACKAGE_SIZE             32
+#define RX_PACKAGE_SIZE             16
 #define FLEXCAN_TIMEOUT             2
 
 enum {
@@ -28,7 +28,7 @@ void flexcan_filter(u32 id1, u32 id2, u32 mid1, u32 mid2);
 void flexcan_init(u8 velocity);
 void flexcan_send_frame(CanTxMsg *txMsg);
 void flexcan_can_enable(void);
-uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount);
+int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount);
 CanRxMsg *flexcan_dump(void);
 void flexcan_reset(void);
 #endif

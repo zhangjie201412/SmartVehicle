@@ -528,7 +528,7 @@ uint8_t toyota_engine_on(void)
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
 {
     uint8_t i, j;
-    uint8_t ret;
+    int8_t ret;
     uint8_t valid_len;
     uint8_t valid_index = 0;
     uint8_t data_type;
@@ -546,6 +546,9 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     }
 
     printf("pid: %s\r\n", getPidKey(pid));
+    //clear flexcan rx buf
+    OSTimeDlyHMSM(0, 0, 0, 100);
+    flexcan_reset();
     valid_len = toyotaStdDs[pid].valid_len;
     offset = toyotaStdDs[pid].offset;
     txMsg.StdId = toyotaStdDs[pid].txId;

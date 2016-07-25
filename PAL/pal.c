@@ -8,6 +8,8 @@
 #include "flexcan.h"
 #include "m25p16.h"
 
+//#define CHECK_ENGINE                    1
+
 #define UPLOAD_THREAD_INTERVAL          10
 #define ENG_INTERVAL                    20
 #define AT_INTERVAL                     30
@@ -303,7 +305,7 @@ void upload_thread(void *unused)
         OSTimeDlyHMSM(0, 0, UPLOAD_THREAD_INTERVAL, 0);
         if(!isConnected())
             continue;
-
+#ifdef CHECK_ENGINE
         //check is engine on
         if(mPal.uploadOps->is_engine_on) {
             engine_on = mPal.uploadOps->is_engine_on();
@@ -316,12 +318,15 @@ void upload_thread(void *unused)
             }
             last_engine_on = engine_on;
         }
-
+#endif
         for(i = 0; i < PID_SIZE; i++) {
+#ifdef CHECK_ENGINE
             //if engine is off, skip upload engine related pids
             if(!engine_on) {
                 i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
+                printf("---> skip ENGINE datas!\r\n");
             }
+#endif
             //check the ops pointer
             if(mPal.uploadOps->transfer_data_stream == NULL) {
                 printf("transfer_data_stream is NULL");
@@ -330,6 +335,10 @@ void upload_thread(void *unused)
 
             data = mPal.uploadOps->transfer_data_stream(i, &len);
             if(data == NULL) {
+                //if current eng data failed, skip eng datas
+                i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
+                //if current bcm data failed, skip bcm datas
+                //i = (i >= BCM_DATA_START) ? 0 : i;
                 continue;
             }
 

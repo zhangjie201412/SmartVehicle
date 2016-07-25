@@ -852,7 +852,7 @@ uint8_t gm_engine_on(void)
 uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
 {
     uint8_t i, j;
-    uint8_t ret;
+    int8_t ret;
     uint8_t valid_len;
     uint8_t valid_index = 0;
     uint8_t data_type;
@@ -868,7 +868,7 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
 
     printf("pid: %s\r\n", getPidKey(pid));
     //clear flexcan rx buf
-    OSTimeDlyHMSM(0, 0, 0, 300);
+    OSTimeDlyHMSM(0, 0, 0, 100);
     flexcan_reset();
     //clear rx buf
     memset(gm_rx_buf, 0x00, 8);
@@ -893,7 +893,7 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
         }
         if(gmDataStream[pid].ds) {
             //check rx data type is ok?
-            //if(data_type == rxMsg->Data[1]) {
+            if(data_type == rxMsg->Data[1]) {
                 //get valid pid callback
                 //send start stream
                 gm_start_stream.StdId = gmDataStream[pid].txId[1];
@@ -909,10 +909,10 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
                         gm_rx_buf[i] = rxMsg->Data[i];
                     }
                 }
-            //} else {
-            //    printf("Error: not valid rx msg\r\n");
-            //    return NULL;
-            //}
+            } else {
+                printf("Error: not valid rx msg\r\n");
+                return NULL;
+            }
         } else {
             //get valid buf
             for(i = 0; i < 8; i++) {
