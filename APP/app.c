@@ -16,6 +16,8 @@
 OS_EVENT* atCmdMailbox;
 int isRunning = 0;
 uint8_t engineOn = 0;
+//unit = second
+__IO uint32_t ticks = 0;
 
 /*
  *********************************************************************************************************
@@ -89,7 +91,16 @@ static uint8_t need_reboot = 0;
 
 void go_reboot(void)
 {
+    printk("####REBOOT####\r\n");
     need_reboot = 1;
+}
+
+uint32_t getTicks(void) {
+    return ticks;
+}
+
+void setTicks(uint32_t t) {
+    ticks = t;
 }
 
 static  void App_TaskStart(void* p_arg)
@@ -114,6 +125,10 @@ static  void App_TaskStart(void* p_arg)
         OSTimeDlyHMSM(0, 0, 5, 0);
         if(need_reboot == 0)
             iwdg_feed();
+        ticks += 5;
+        if(ticks >= CONNECTION_TIMEOUT) {
+            go_reboot();
+        }
     }
 }
 

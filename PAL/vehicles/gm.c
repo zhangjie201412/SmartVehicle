@@ -7,7 +7,7 @@
 DevCtrlOps gm_ops;
 DevUploadOps gm_upload_ops;
 
-CanTxMsg gm_lamp_on = 
+CanTxMsg gm_lamp_on =
 {
     0x241, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -15,7 +15,7 @@ CanTxMsg gm_lamp_on =
     0x07, 0xae, 0x02, 0x00, 0x00, 0x02, 0x02, 0x00
 };
 
-CanTxMsg gm_lamp_off = 
+CanTxMsg gm_lamp_off =
 {
     0x241, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
@@ -262,27 +262,27 @@ PidSupportItem gmSupportItems[PID_SIZE] =
     {ENG_DATA_OILTEMP, SUPPORTED},
     {ENG_DATA_FUEL, SUPPORTED},
     {ENG_DATA_FUELLEVEL, SUPPORTED},
-    {ENG_DATA_FUELTANK, UNSUPPORTED},
-    {AT_DATA_OILTEMP, UNSUPPORTED},
-    {ABS_DATA_OILLEVEL, UNSUPPORTED},
-    {BCM_DATA_CHARGESTATUS, UNSUPPORTED},
-    {BCM_DATA_BATTCURRENT, UNSUPPORTED},
-    {BCM_DATA_BATTSTATUS, UNSUPPORTED},
-    {BCM_DATA_BATTVOLT, UNSUPPORTED},
-    {BCM_DATA_DDA, UNSUPPORTED},
-    {BCM_DATA_PDA, UNSUPPORTED},
-    {BCM_DATA_RRDA, UNSUPPORTED},
-    {BCM_DATA_LRDA, UNSUPPORTED},
-    {BCM_DATA_SUNROOF, UNSUPPORTED},
-    {BCM_DATA_PARKLAMP, UNSUPPORTED},
-    {BCM_DATA_HEADLAMP, UNSUPPORTED},
-    {BCM_DATA_HIGHBEAM, UNSUPPORTED},
-    {BCM_DATA_HAZARD, UNSUPPORTED},
-    {BCM_DATA_FRONTFOG, UNSUPPORTED},
-    {BCM_DATA_REARFOG, UNSUPPORTED},
-    {BCM_DATA_LEFTTURN, UNSUPPORTED},
-    {BCM_DATA_RIGHTTURN, UNSUPPORTED},
-    {BCM_DATA_ODO, UNSUPPORTED},
+    {ENG_DATA_FUELTANK, SUPPORTED},
+    {AT_DATA_OILTEMP, SUPPORTED},
+    {ABS_DATA_OILLEVEL, SUPPORTED},
+    {BCM_DATA_CHARGESTATUS, SUPPORTED},
+    {BCM_DATA_BATTCURRENT, SUPPORTED},
+    {BCM_DATA_BATTSTATUS, SUPPORTED},
+    {BCM_DATA_BATTVOLT, SUPPORTED},
+    {BCM_DATA_DDA, SUPPORTED},
+    {BCM_DATA_PDA, SUPPORTED},
+    {BCM_DATA_RRDA, SUPPORTED},
+    {BCM_DATA_LRDA, SUPPORTED},
+    {BCM_DATA_SUNROOF, SUPPORTED},
+    {BCM_DATA_PARKLAMP, SUPPORTED},
+    {BCM_DATA_HEADLAMP, SUPPORTED},
+    {BCM_DATA_HIGHBEAM, SUPPORTED},
+    {BCM_DATA_HAZARD, SUPPORTED},
+    {BCM_DATA_FRONTFOG, SUPPORTED},
+    {BCM_DATA_REARFOG, SUPPORTED},
+    {BCM_DATA_LEFTTURN, SUPPORTED},
+    {BCM_DATA_RIGHTTURN, SUPPORTED},
+    {BCM_DATA_ODO, SUPPORTED},
 };
 
 GmDataStream gmDataStream[PID_SIZE] =
@@ -292,7 +292,7 @@ GmDataStream gmDataStream[PID_SIZE] =
         //pid
         ENG_DATA_RPM,
         //txId
-        0x7e0,
+        {0x7e0, 0x7e0},
         //rxId
         {0x7e8, 0x5e8},
         //data
@@ -304,7 +304,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_VS
     {
         ENG_DATA_VS,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x0d, 0x00, 0x00, 0x00},
         TRUE,
@@ -314,7 +314,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_ECT
     {
         ENG_DATA_ECT,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x05, 0x00, 0x00, 0x00},
         TRUE,
@@ -324,7 +324,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_IAT
     {
         ENG_DATA_IAT,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x0f, 0x00, 0x00, 0x00},
         TRUE,
@@ -334,7 +334,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_APP
     {
         ENG_DATA_APP,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x13, 0x1f, 0x00, 0x00, 0x00},
         TRUE,
@@ -344,7 +344,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_TP
     {
         ENG_DATA_TP,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x12, 0xb1, 0x00, 0x00, 0x00},
         TRUE,
@@ -354,7 +354,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_ERT
     {
         ENG_DATA_ERT,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x1f, 0x00, 0x00, 0x00},
         TRUE,
@@ -364,7 +364,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_LOAD
     {
         ENG_DATA_LOAD,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x04, 0x00, 0x00, 0x00},
         TRUE,
@@ -374,7 +374,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_LTFT
     {
         ENG_DATA_LTFT,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x07, 0x00, 0x00, 0x00},
         TRUE,
@@ -384,7 +384,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_STFT
     {
         ENG_DATA_STFT,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x06, 0x00, 0x00, 0x00},
         TRUE,
@@ -394,7 +394,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MISFIRE1
     {
         ENG_DATA_MISFIRE1,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x12, 0x06, 0x00, 0x00, 0x00},
         TRUE,
@@ -404,7 +404,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MISFIRE2
     {
         ENG_DATA_MISFIRE2,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x12, 0x05, 0x00, 0x00, 0x00},
         TRUE,
@@ -414,7 +414,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MISFIRE3
     {
         ENG_DATA_MISFIRE3,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x12, 0x07, 0x00, 0x00, 0x00},
         TRUE,
@@ -424,7 +424,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MISFIRE4
     {
         ENG_DATA_MISFIRE4,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x12, 0x08, 0x00, 0x00, 0x00},
         TRUE,
@@ -434,7 +434,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MISFIRE5
     {
         ENG_DATA_MISFIRE5,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x11, 0xea, 0x00, 0x00, 0x00},
         TRUE,
@@ -444,7 +444,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MISFIRE6
     {
         ENG_DATA_MISFIRE6,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x11, 0xeb, 0x00, 0x00, 0x00},
         TRUE,
@@ -454,7 +454,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_FCLS
     {
         ENG_DATA_FCLS,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x11, 0x31, 0x00, 0x00, 0x00},
         TRUE,
@@ -464,7 +464,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_KEYSTATUS
     {
         ENG_DATA_KEYSTATUS,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x20, 0x7e, 0x00, 0x00, 0x00},
         TRUE,
@@ -474,7 +474,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_HO2S1
     {
         ENG_DATA_HO2S1,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x23, 0x20, 0x00, 0x00, 0x00},
         TRUE,
@@ -484,7 +484,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_HO2S2
     {
         ENG_DATA_HO2S2,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x23, 0x21, 0x00, 0x00, 0x00},
         TRUE,
@@ -494,7 +494,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MAP
     {
         ENG_DATA_MAP,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x20, 0x8a, 0x00, 0x00, 0x00},
         TRUE,
@@ -504,7 +504,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_INJECTPULSE
     {
         ENG_DATA_INJECTPULSE,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x12, 0xc3, 0x00, 0x00, 0x00},
         TRUE,
@@ -514,7 +514,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_OILPRESSURE
     {
         ENG_DATA_OILPRESSURE,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x11, 0x27, 0x00, 0x00, 0x00},
         TRUE,
@@ -524,7 +524,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_OILLEVELSTATUS
     {
         ENG_DATA_OILLEVELSTATUS,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x11, 0x27, 0x00, 0x00, 0x00},
         TRUE,
@@ -534,7 +534,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_AF
     {
         ENG_DATA_AF,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x44, 0x00, 0x00, 0x00},
         TRUE,
@@ -544,7 +544,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_IGTIMING
     {
         ENG_DATA_IGTIMING,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x0e, 0x00, 0x00, 0x00},
         TRUE,
@@ -554,7 +554,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_MAF
     {
         ENG_DATA_MAF,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x00, 0x10, 0x00, 0x00, 0x00},
         TRUE,
@@ -564,7 +564,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_OILLIFE
     {
         ENG_DATA_OILLIFE,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x02, 0x1a, 0x6d, 0x00, 0x00, 0x00, 0x00, 0x00},
         FALSE,
@@ -574,7 +574,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_OILTEMP
     {
         ENG_DATA_OILTEMP,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x11, 0x54, 0x00, 0x00, 0x00},
         TRUE,
@@ -584,7 +584,7 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_FUEL
     {
         ENG_DATA_FUEL,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x19, 0x40, 0x00, 0x00, 0x00},
         TRUE,
@@ -594,12 +594,222 @@ GmDataStream gmDataStream[PID_SIZE] =
     //ENG_DATA_FUELLEVEL
     {
         ENG_DATA_FUELLEVEL,
-        0x7e0,
+        {0x7e0, 0x7e0},
         {0x7e8, 0x5e8},
         {0x04, 0x2c, 0xfe, 0x13, 0x2a, 0x00, 0x00, 0x00},
         TRUE,
         1,
         2,
+    },
+    //ENG_DATA_FUELTANK
+    {
+        ENG_DATA_FUELTANK,
+        {0x7e0, 0x7e0},
+        {0x7e8, 0x5e8},
+        {0x04, 0x2c, 0xfe, 0x13, 0x1d, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        2,
+    },
+    //AT_DATA_OILTEMP
+    {
+        AT_DATA_OILTEMP,
+        {0x7e2, 0x7e2},
+        {0x7ea, 0x5ea},
+        {0x04, 0x2c, 0xfe, 0x00, 0x2f, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //ABS_DATA_OILLEVEL
+    {
+        ABS_DATA_OILLEVEL,
+        {0x243, 0x243},
+        {0x643, 0x543},
+        {0x04, 0x2c, 0xfe, 0x40, 0x75, 0x00, 0x00, 0x00},
+        TRUE,
+        1,
+        1,
+    },
+    //BCM_DATA_CHARGESTATUS
+    {
+        BCM_DATA_CHARGESTATUS,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x90, 0xf8, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_BATTCURRENT
+    {
+        BCM_DATA_BATTCURRENT,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x90, 0xfb, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_BATTSTATUS
+    {
+        BCM_DATA_BATTSTATUS,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x02, 0x1a, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        3,
+        2,
+    },
+    //BCM_DATA_BATTVOLT
+    {
+        BCM_DATA_BATTVOLT,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x90, 0xb1, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_DDA
+    {
+        BCM_DATA_DDA,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x85, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        1,
+    },
+    //BCM_DATA_PDA
+    {
+        BCM_DATA_PDA,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x86, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        1,
+    },
+    //BCM_DATA_RRDA
+    {
+        BCM_DATA_RRDA,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x88, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        1,
+    },
+    //BCM_DATA_LRDA
+    {
+        BCM_DATA_LRDA,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x87, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        1,
+    },
+    //BCM_DATA_SUNROOF
+    {
+        BCM_DATA_SUNROOF,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x90, 0xe0, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        1,
+    },
+    //BCM_DATA_PARKLAMP
+    {
+        BCM_DATA_PARKLAMP,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_HEADLAMP
+    {
+        BCM_DATA_HEADLAMP,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_HIGHBEAM
+    {
+        BCM_DATA_HIGHBEAM,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_HAZARD
+    {
+        BCM_DATA_HAZARD,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_FRONTFOG
+    {
+        BCM_DATA_FRONTFOG,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_REARFOG
+    {
+        BCM_DATA_REARFOG,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_LEFTTURN
+    {
+        BCM_DATA_LEFTTURN,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_RIGHTTURN
+    {
+        BCM_DATA_RIGHTTURN,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x03, 0x22, 0x80, 0x4c, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        2,
+    },
+    //BCM_DATA_ODO
+    {
+        BCM_DATA_ODO,
+        {0x241, 0x241},
+        {0x641, 0x641},
+        {0x02, 0x1a, 0xdf, 0x00, 0x00, 0x00, 0x00, 0x00},
+        FALSE,
+        4,
+        4,
     },
 };
 
@@ -667,7 +877,7 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
     offset = gmDataStream[pid].offset;
 
     //send pid data
-    txMsg.StdId = gmDataStream[pid].txId;
+    txMsg.StdId = gmDataStream[pid].txId[0];
     txMsg.IDE = CAN_ID_STD;
     txMsg.DLC = 8;
     for(i = 0; i < txMsg.DLC; i++) {
@@ -686,6 +896,7 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
             //if(data_type == rxMsg->Data[1]) {
                 //get valid pid callback
                 //send start stream
+                gm_start_stream.StdId = gmDataStream[pid].txId[1];
                 ret = flexcan_ioctl(DIR_BI, &gm_start_stream,
                         gmDataStream[pid].rxId[1], 1);
                 if(ret > 0) {

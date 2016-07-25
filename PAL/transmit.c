@@ -63,6 +63,8 @@ void recv_callback(uint8_t *buf)
     json = cJSON_Parse((const char *)buf);
     if(!json) {
         printf("\r\n[%s]\r\n", cJSON_GetErrorPtr());
+        //send retry cmd
+        send_retry();
     } else {
         item = cJSON_GetObjectItem(json, KEY_MSG_TYPE);
         msg_type = item->valueint;
@@ -80,6 +82,8 @@ void recv_callback(uint8_t *buf)
                 if(((heartbeat - 1) * 2 + 1) == heartbeat_rsp) {
                     //printf("heartbeat!\r\n");
                     connected = TRUE;
+                    //clear ticks
+                    setTicks(0);
                 } else {
                     printf("failed to parse heartbeat\r\n");
                 }
@@ -114,7 +118,6 @@ void recv_callback(uint8_t *buf)
                     fake_setup();
                 }
                 break;
-
         }
     }
     cJSON_Delete(json);
@@ -163,6 +166,25 @@ void send_heartbeat(uint8_t count)
     cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
     cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_HEARTBEAT);
     cJSON_AddNumberToObject(root, KEY_HEARTBEAT, count);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    //printf("%s\r\n", out);
+    sim900_write((uint8_t *)out, length);
+
+    cJSON_Delete(root);
+    myfree(out);
+}
+
+void send_retry(void)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+
+    getDeviceId();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_RETRY);
 
     out = cJSON_Print(root);
     length = strlen(out);

@@ -4,7 +4,7 @@
 
 typedef struct {
     uint8_t pid;
-    uint16_t txId;
+    uint16_t txId[2];
     uint16_t rxId[2];
     uint8_t data[8];
     uint8_t ds;

@@ -307,8 +307,15 @@ void upload_thread(void *unused)
         //check is engine on
         if(mPal.uploadOps->is_engine_on) {
             engine_on = mPal.uploadOps->is_engine_on();
+            if(engine_on == TRUE && (last_engine_on == FALSE)) {
+                printf("---> ENGINE IS ON!! <---\r\n");
+                //while engine is on, check if vehicle has fault code
+                //TODO: ???
+            } else if(engine_on == FALSE && (last_engine_on == TRUE)) {
+                printf("---> ENGINE IS OFF!! <---\r\n");
+            }
+            last_engine_on = engine_on;
         }
-
 
         for(i = 0; i < PID_SIZE; i++) {
             //if engine is off, skip upload engine related pids
