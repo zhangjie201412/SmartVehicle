@@ -8,7 +8,7 @@
 #include "flexcan.h"
 #include "m25p16.h"
 
-//#define CHECK_ENGINE                    1
+#define CHECK_ENGINE                    1
 
 #define UPLOAD_THREAD_INTERVAL          10
 #define ENG_INTERVAL                    20

@@ -50,11 +50,8 @@ static void task_process_atcmd(void *parg);
 int main(void)
 {
     CPU_INT08U os_err;
-    //禁止CPU中断
     CPU_IntDis();
-    //UCOS 初始化
     OSInit();                                                   /* Initialize "uC/OS-II, The Real-Time Kernel".         */
-    //硬件平台初始化
     BSP_Init();                                                 /* Initialize BSP functions.  */
     printk("Vehicle Union device Start!\r\n");
     os_err = OSTaskCreate((void (*) (void *)) App_TaskStart,	  		  		//指向任务代码的指针
@@ -107,16 +104,10 @@ static  void App_TaskStart(void* p_arg)
 {
     (void) p_arg;
 
-    //初始化ucos时钟节拍
     OS_CPU_SysTickInit();                                       /* Initialize the SysTick.       */
-
-    //使能ucos 的统计任务
 #if (OS_TASK_STAT_EN > 0)
-    //----统计任务初始化函数
     OSStatInit();                                               /* Determine CPU capacity.                              */
 #endif
-    //建立其他的任务
-
     App_TaskCreate();
 
     need_reboot = 0;

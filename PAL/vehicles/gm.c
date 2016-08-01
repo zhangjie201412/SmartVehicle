@@ -846,7 +846,33 @@ void gm_setup(void)
 
 uint8_t gm_engine_on(void)
 {
-    return check_engine();
+    CanRxMsg *rxMsg;
+    uint8_t ret = -1;
+    uint8_t on = FALSE;
+    CanTxMsg gm_engineAlive =
+    {
+        0x7e0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x04, 0x2c, 0xfe, 0x00, 0x0c, 0x00, 0x00, 0x00,
+    };
+
+    ret = flexcan_ioctl(DIR_BI, &gm_engineAlive,
+            0x7e8, 1);
+    if(ret > 0) {
+        rxMsg = flexcan_dump();
+        //check if the receive msg type is needed
+        //TODO: ???
+        if(rxMsg == NULL) {
+            on = FALSE;
+        } else {
+            on = TRUE;
+        }
+    } else {
+        on = FALSE;
+    }
+
+    return on;
 }
 
 uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
