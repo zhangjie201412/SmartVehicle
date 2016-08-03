@@ -329,7 +329,7 @@ void upload_thread(void *unused)
 #endif
             //check the ops pointer
             if(mPal.uploadOps->transfer_data_stream == NULL) {
-                printf("transfer_data_stream is NULL");
+                printf("transfer_data_stream is NULL\r\n");
                 continue;
             }
 
