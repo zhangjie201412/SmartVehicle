@@ -68,7 +68,7 @@ void recv_callback(uint8_t *buf)
     } else {
         item = cJSON_GetObjectItem(json, KEY_MSG_TYPE);
         msg_type = item->valueint;
-        printf("msg type = %d\r\n", msg_type);
+        //printf("msg type = %d\r\n", msg_type);
         switch(msg_type) {
             case MSG_TYPE_HEARTBEAT:
                 printf("---device offline---\r\n");
@@ -77,8 +77,8 @@ void recv_callback(uint8_t *buf)
             case MSG_TYPE_HEARTBEAT_RSP:
                 item = cJSON_GetObjectItem(json, KEY_HEARTBEAT);
                 heartbeat_rsp = item->valueint;
-                //printf("heartbeat = %d, heartbeat_rsp = %d\r\n",
-                //        heartbeat, heartbeat_rsp);
+                printf("heartbeat = %d, heartbeat_rsp = %d\r\n",
+                        heartbeat, heartbeat_rsp);
                 if(((heartbeat - 1) * 2 + 1) == heartbeat_rsp) {
                     //printf("heartbeat!\r\n");
                     connected = TRUE;
@@ -201,6 +201,7 @@ void control_rsp(uint32_t cmd_id, uint8_t cmd_type)
     char *out;
     uint16_t length;
 
+    printf("-> %s\r\n", __func__);
     getDeviceId();
     cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
     cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_CTRL_RSP);
@@ -210,7 +211,7 @@ void control_rsp(uint32_t cmd_id, uint8_t cmd_type)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    //printf("%s\r\n", out);
+    printf("%s\r\n", out);
     sim900_write((uint8_t *)out, length);
 
     cJSON_Delete(root);

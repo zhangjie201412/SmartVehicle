@@ -320,6 +320,7 @@ void upload_thread(void *unused)
         }
 #endif
         for(i = 0; i < PID_SIZE; i++) {
+            printf("%s: i = %d\r\n", __func__, i);
 #ifdef CHECK_ENGINE
             //if engine is off, skip upload engine related pids
             if(!engine_on) {
@@ -338,7 +339,7 @@ void upload_thread(void *unused)
                 //if current eng data failed, skip eng datas
                 i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
                 //if current bcm data failed, skip bcm datas
-                //i = (i >= BCM_DATA_START) ? 0 : i;
+                i = (i >= BCM_DATA_START) ? 0 : i;
                 continue;
             }
 
