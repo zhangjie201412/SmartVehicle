@@ -64,14 +64,29 @@ void gps_write(uint8_t *buf, uint16_t size)
 
 void gps_setup(void)
 {
-    float tp;
-    nmea_msg gpsx;
-    //gps_write("$PDTINFO\r\n", 10);
-    char buf[] = "$GNGGA,142059.00,3607.41788,N,12028.44882,E,1,04,4.29,21.6,M,5.6,M,,*51";
+    GPIO_InitTypeDef GPIO_InitStructure;
 
-    GPS_Analysis(&gpsx, buf);
-    tp=gpsx.longitude;
-    printk("Longitude: \r\n");
+    printf("-> %s\r\n", __func__);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    GPIO_SetBits(GPIOC, GPIO_Pin_12);
+}
+
+void gps_test(void)
+{
+    nmea_msg msg;
+    uint8_t test1[128] = "$GNGGA,000024.000,3123.212191,N,12102.993440,E,0,00,127.000,20.506,M,0,M,,*56";
+    uint8_t test2[128] = "$GNRMC,235947.000,V,3123.212191,N,12102.993440,E,0.000,0.000,,,E,N*2B";
+
+    printf("-> %s\r\n", __func__);
+    GPS_Analysis(&msg, test2);
+    printf("lon = %d\r\n", msg.longitude);
+    printf("lat = %d\r\n", msg.latitude);
 }
 
 void GPS_USART_IRQHandler(void)

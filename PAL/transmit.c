@@ -4,6 +4,7 @@
 #include "cJSON.h"
 #include "malloc.h"
 #include "app.h"
+#include "gps.h"
 
 #define HEARTBEAT_INTERVAL 10
 
@@ -15,7 +16,7 @@ CtrlItem ctrlTable[CONTROL_END] = {
     {CONTROL_WINDOW, "bcm_fun_window"},
     {CONTROL_DOOR, "bcm_fun_door"},
     {CONTROL_LIGHT, "bcm_fun_lamp"},
-    {CONTROL_SUNFLOOR, "bcm_fun_sunfloor"},
+    {CONTROL_SUNROOF, "bcm_fun_sunroof"},
     {CONTROL_TRUNK, "bcm_fun_trunk"},
     {CONTROL_FINDCAR, "bcm_fun_findcar"},
     {CONTROL_IMMOLOCK, "bcm_fun_immolock"},
@@ -31,7 +32,9 @@ void transmit_init(void)
     sim900_init();
     //connect the server
     sim900_connect();
-//    gm_setup();
+//    gps_init();
+//    gps_setup();
+//    gps_test();
     //register callback
     sim900_register_recv(recv_callback);
     //run heart beat thread

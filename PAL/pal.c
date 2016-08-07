@@ -10,11 +10,11 @@
 
 #define CHECK_ENGINE                    1
 
-#define UPLOAD_THREAD_INTERVAL          10
-#define ENG_INTERVAL                    20
-#define AT_INTERVAL                     30
-#define ABS_INTERVAL                    40
-#define BCM_INTERVAL                    50
+#define UPLOAD_THREAD_INTERVAL          60
+#define ENG_INTERVAL                    120
+#define AT_INTERVAL                     300
+#define ABS_INTERVAL                    400
+#define BCM_INTERVAL                    120
 
 #define DEVICE_ID_ADDRESS               0x80
 #define TRANSMIT_TASK_STK_SIZE          128
@@ -124,9 +124,9 @@ void pal_init(void)
     OSTaskCreate(transmit_thread, (void *)0,
             &transmitTaskStk[TRANSMIT_TASK_STK_SIZE - 1],
             TRANSMIT_TASK_PRIO);
-//    OSTaskCreate(immolock_thread, (void *)0,
-//            &immolockTaskStk[IMMOLOCK_TASK_STK_SIZE - 1],
-//            IMMOLOCK_TASK_PRIO);
+    OSTaskCreate(immolock_thread, (void *)0,
+            &immolockTaskStk[IMMOLOCK_TASK_STK_SIZE - 1],
+            IMMOLOCK_TASK_PRIO);
     OSTaskCreate(upload_thread, (void *)0,
             &uploadTaskStk[UPLOAD_TASK_STK_SIZE - 1],
             UPLOAD_TASK_PRIO);
@@ -216,7 +216,7 @@ void pal_do_bcm(uint8_t id, uint8_t val, uint32_t cmd_id)
         case CONTROL_LIGHT:
             mPal.ops->control_light(val);
             break;
-        case CONTROL_SUNFLOOR:
+        case CONTROL_SUNROOF:
             mPal.ops->control_sunfloor(val);
             break;
         case CONTROL_TRUNK:
@@ -320,7 +320,7 @@ void upload_thread(void *unused)
         }
 #endif
         for(i = 0; i < PID_SIZE; i++) {
-            printf("%s: i = %d\r\n", __func__, i);
+//            printf("%s: i = %d\r\n", __func__, i);
 #ifdef CHECK_ENGINE
             //if engine is off, skip upload engine related pids
             if(!engine_on) {
@@ -339,7 +339,9 @@ void upload_thread(void *unused)
                 //if current eng data failed, skip eng datas
                 i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
                 //if current bcm data failed, skip bcm datas
-                i = (i >= BCM_DATA_START) ? 0 : i;
+                if(i >= BCM_DATA_START)
+                    break;
+                //i = (i >= BCM_DATA_START) ? 0 : i;
                 continue;
             }
 
