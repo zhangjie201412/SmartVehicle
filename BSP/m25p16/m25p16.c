@@ -159,7 +159,7 @@ void flash_wait_busy(void)
 
 uint8_t flash_check_id(void)
 {
-    uint8_t id[4];
+    uint8_t id[4] = {0, 0, 0, 0};
     SELECT();
     spi_send_byte(RDID);
     id[0] = spi_recv_byte();

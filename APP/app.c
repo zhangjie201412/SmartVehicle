@@ -12,6 +12,7 @@
 #include "cJSON.h"
 #include "flexcan.h"
 #include "wdg.h"
+#include "pal.h"
 
 OS_EVENT* atCmdMailbox;
 int isRunning = 0;

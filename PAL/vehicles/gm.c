@@ -1059,6 +1059,36 @@ void gm_ctrl_findcar(uint8_t state)
     flexcan_send_frame(&gm_keepalive);
 }
 
+CanTxMsg gm_fault_code =
+{
+    0x000, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x03, 0xA9, 0x81, 0x01A, 0x00, 0x00, 0x00, 0x00
+};
+
+uint16_t gm_code_list[FAULT_CODE_MAX_SIZE][2] =
+{
+    //eng_code
+    {0x7e0, 0x5e8},
+    //at_code
+    {0x7e2, 0x5ea},
+    //abs_code
+    {0x243, 0x543},
+    //srs_code
+    {0x247, 0x547},
+    //bcm_code
+    {0x241, 0x541},
+    //ipc_code
+    {0x24c, 0x54c},
+    //eps_code
+    {0x242, 0x542},
+    //ac_code
+    {0x251, 0x551},
+    //tpms
+    {0x241, 0x541},
+};
+
 void gm_clear_fault_code(void)
 {
     printf("-> %s\r\n", __func__);

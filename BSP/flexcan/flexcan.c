@@ -4,9 +4,9 @@
 #include "ucos_ii.h"
 #include "ringbuffer.h"
 
-static __IO CanRxMsg g_rxMsg[RX_PACKAGE_SIZE];
-static __IO uint8_t w_off, r_off;
-static __IO CanRxMsg m_rxMsg;
+static CanRxMsg g_rxMsg[RX_PACKAGE_SIZE];
+static uint8_t w_off, r_off;
+static CanRxMsg m_rxMsg;
 OS_EVENT *lock;
 OS_EVENT *mailbox;
 
@@ -15,7 +15,7 @@ void flexcan_nvic_init(void)
 	NVIC_InitTypeDef  NVIC_InitStructure;
 	
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
-	
+
 	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -135,7 +135,7 @@ int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCoun
     CanRxMsg *rxMsg;
     INT8U err;
     uint8_t i = 0, j = 0;
-    uint8_t ret = 0;
+    int8_t ret = 0;
     uint8_t exception_count = 0;
 
     if(dir & DIR_INPUT) {
