@@ -239,15 +239,20 @@ void pal_get_fault_code(void)
     uint8_t i, j;
     FaultCodeValue value;
     uint8_t len;
+    uint32_t *code;
 
     for(i = 0; i < FAULT_CODE_SIZE; i++) {
         if(mPal.uploadOps->check_fault_code == NULL)
             break;
         value.fault_code = i;
         memset(value.code, 0x00, FAULT_CODE_MAX_SIZE);
-        value.code = mPal.uploadOps->check_fault_code(i, &len);
-        if(value.code == NULL)
+        code = mPal.uploadOps->check_fault_code(i, &len);
+        if(code == NULL)
             continue;
+
+        for(j = 0; j < len; j++) {
+            value.code[j] = code[j];
+        }
 
         printf("%s: %s\t", __func__, getFaultCodeKey(i));
         for(j = 0; j < len; j++) {

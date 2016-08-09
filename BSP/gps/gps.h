@@ -173,4 +173,6 @@ void NMEA_GPGSA_Analysis(nmea_msg *gpsx,u8 *buf);
 void NMEA_GPGSA_Analysis(nmea_msg *gpsx,u8 *buf);
 void NMEA_GPRMC_Analysis(nmea_msg *gpsx,u8 *buf);
 void NMEA_GPVTG_Analysis(nmea_msg *gpsx,u8 *buf);
+uint32_t getLongitude(void);
+uint32_t getLatitude(void);
 #endif

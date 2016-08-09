@@ -89,6 +89,72 @@ void gps_test(void)
     printf("lat = %d\r\n", msg.latitude);
 }
 
+__IO uint8_t rx_buf[100];
+__IO uint8_t rx_len = 0;
+__IO uint8_t last_byte;
+__IO nmea_msg gpsx_msg;
+uint32_t longitude = 0;
+uint32_t latitude = 0;
+uint32_t lon[10];
+uint32_t lat[10];
+uint8_t gps_index = 0;
+
+uint32_t getLongitude(void)
+{
+    return longitude;
+}
+
+uint32_t getLatitude(void)
+{
+    return latitude;
+}
+
+void gps_process(uint8_t data)
+{
+    uint8_t i;
+    char *tmp;
+    uint32_t lat_tmp;
+    uint32_t lon_tmp;
+    //printf("%c", data);
+    if(last_byte == 0x0d && (data == 0x0a)) {
+        tmp = strstr((char *)rx_buf, "$GNRMC");
+        if(tmp) {
+            NMEA_GPRMC_Analysis(&gpsx_msg, rx_buf);
+/*            printf("year = %d, mon = %d, date = %d, hour = %d, min = %d, sec = %d\r\n",
+                    gpsx_msg.utc.year,
+                    gpsx_msg.utc.month,
+                    gpsx_msg.utc.date,
+                    gpsx_msg.utc.hour,
+                    gpsx_msg.utc.min,
+                    gpsx_msg.utc.sec);
+                    */
+            lon[gps_index] = gpsx_msg.longitude;
+            lat[gps_index] = gpsx_msg.latitude;
+            gps_index ++;
+            if(gps_index == 10) {
+                gps_index = 0;
+                lat_tmp = 0;
+                lon_tmp = 0;
+                //get the data
+                for(i = 0; i < 10; i++) {
+                    lat_tmp += lat[i];
+                    lon_tmp += lon[i];
+                }
+                latitude = lat_tmp / 10;
+                longitude = lon_tmp / 10;
+            }
+        }
+        rx_len = 0;
+        //memset(rx_buf, 0x00, 100);
+        for(i = 0; i < 100; i++) {
+            rx_buf[i] = 0x00;
+        }
+    }
+
+    rx_buf[rx_len ++] = data;
+    last_byte = data;
+}
+
 void GPS_USART_IRQHandler(void)
 {
     uint8_t data = 0;
@@ -101,7 +167,7 @@ void GPS_USART_IRQHandler(void)
     if(USART_GetITStatus(GPS_USART, USART_IT_RXNE)
             != RESET) {
         data = USART_ReceiveData(GPS_USART);
-        printk("%c", data);
+        gps_process(data);
     }
 
     if(USART_GetITStatus(GPS_USART, USART_IT_TXE)

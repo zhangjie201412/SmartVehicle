@@ -32,8 +32,8 @@ void transmit_init(void)
     sim900_init();
     //connect the server
     sim900_connect();
-//    gps_init();
-//    gps_setup();
+    gps_init();
+    gps_setup();
 //    gps_test();
     //register callback
     sim900_register_recv(recv_callback);
@@ -129,6 +129,7 @@ void recv_callback(uint8_t *buf)
 
 static void heartbeat_thread(void *parg)
 {
+    uint32_t lng, lat;
     parg = parg;
     //send login message firstly
     printf("login!\r\n");
@@ -139,6 +140,13 @@ static void heartbeat_thread(void *parg)
         //send heartbeat
         heartbeat = (heartbeat == 100) ? 0 : heartbeat;
         send_heartbeat(heartbeat ++);
+        if(heartbeat % 2 == 0) {
+            lng = getLongitude();
+            lat = getLatitude();
+            if(lng != 0 || lat != 0) {
+                upload_location(lng, lat);
+            }
+        }
     }
 }
 
@@ -254,4 +262,25 @@ void upload_item(UpdateItem *item)
 void upload_fault_code(FaultCodeValue *value)
 {
 
+}
+
+void upload_location(uint32_t longitude, uint32_t latitude)
+{
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+
+    getDeviceId();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_LOCATION);
+    cJSON_AddNumberToObject(root, KEY_LNG, longitude);
+    cJSON_AddNumberToObject(root, KEY_LAT, latitude);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    printf("%s\r\n", out);
+    sim900_write((uint8_t *)out, length);
+
+    cJSON_Delete(root);
+    myfree(out);
 }

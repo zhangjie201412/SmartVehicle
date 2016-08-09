@@ -10,6 +10,8 @@
 #define KEY_VEHICLE_TYPE    "model"
 #define KEY_STATUS          "status"
 #define KEY_CMD_TYPE        "cmd_type"
+#define KEY_LNG             "lng"
+#define KEY_LAT             "lat"
 
 #define LOGIN_DELAYED_TIME          6
 
@@ -19,6 +21,7 @@
 #define MSG_TYPE_CTRL_RSP           3
 #define MSG_TYPE_UPLOAD             4
 
+#define MSG_TYPE_LOCATION           7
 #define MSG_TYPE_LOGIN              8
 #define MSG_TYPE_LOGIN_RSP          9
 #define MSG_TYPE_VEHICLE_TYPE       10
@@ -45,5 +48,6 @@ void send_heartbeat(uint8_t count);
 void control_rsp(uint32_t cmd_id, uint8_t cmd_type);
 void upload_item(UpdateItem *item);
 void upload_fault_code(FaultCodeValue *value);
+void upload_location(uint32_t longitude, uint32_t latitude);
 
 #endif
