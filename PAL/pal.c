@@ -234,6 +234,31 @@ void pal_do_bcm(uint8_t id, uint8_t val, uint32_t cmd_id)
     //printf("%s:----\r\n", __func__);
 }
 
+void pal_get_fault_code(void)
+{
+    uint8_t i, j;
+    FaultCodeValue value;
+    uint8_t len;
+
+    for(i = 0; i < FAULT_CODE_SIZE; i++) {
+        if(mPal.uploadOps->check_fault_code == NULL)
+            break;
+        value.fault_code = i;
+        memset(value.code, 0x00, FAULT_CODE_MAX_SIZE);
+        value.code = mPal.uploadOps->check_fault_code(i, &len);
+        if(value.code == NULL)
+            continue;
+
+        printf("%s: %s\t", __func__, getFaultCodeKey(i));
+        for(j = 0; j < len; j++) {
+            printf("%d(%04x) ", value.code[j], value.code[j]);
+        }
+        printf("\r\n");
+        //upload the fault code
+        upload_fault_code(&value);
+    }
+}
+
 void update_item(uint8_t pid, uint8_t *data, uint8_t len)
 {
     uint8_t i;
@@ -312,7 +337,7 @@ void upload_thread(void *unused)
             if(engine_on == TRUE && (last_engine_on == FALSE)) {
                 printf("---> ENGINE IS ON!! <---\r\n");
                 //while engine is on, check if vehicle has fault code
-                //TODO: ???
+                pal_get_fault_code();
             } else if(engine_on == FALSE && (last_engine_on == TRUE)) {
                 printf("---> ENGINE IS OFF!! <---\r\n");
             }
@@ -358,6 +383,11 @@ void upload_thread(void *unused)
 const char *getPidKey(uint8_t pid)
 {
     return pidList[pid].key;
+}
+
+const char *getFaultCodeKey(uint8_t code)
+{
+    return faultCodeList[code].key;
 }
 
 void getDeviceId(void)

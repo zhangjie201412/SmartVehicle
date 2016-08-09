@@ -251,3 +251,7 @@ void upload_item(UpdateItem *item)
     myfree(out);
 }
 
+void upload_fault_code(FaultCodeValue *value)
+{
+
+}

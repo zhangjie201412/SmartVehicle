@@ -13,7 +13,7 @@ OS_EVENT *mailbox;
 void flexcan_nvic_init(void)
 {
 	NVIC_InitTypeDef  NVIC_InitStructure;
-	
+
 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
 
 	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;

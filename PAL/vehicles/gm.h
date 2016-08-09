@@ -24,4 +24,5 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len);
 
 uint8_t gm_engine_on(void);
 void gm_clear_fault_code(void);
+uint32_t *gm_check_fault_code(uint8_t id, uint8_t *len);
 #endif

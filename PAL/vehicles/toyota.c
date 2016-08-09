@@ -514,9 +514,11 @@ void toyota_setup(void)
     toyota_ops.control_trunk = toyota_ctrl_trunk;
     toyota_ops.clear_fault_code = toyota_clear_fault_code;
 
-    pal->ops = &toyota_ops;
     toyota_upload_ops.transfer_data_stream = toyota_data_stream;
     toyota_upload_ops.is_engine_on = toyota_engine_on;
+    toyota_upload_ops.check_fault_code = toyota_check_fault_code;
+
+    pal->ops = &toyota_ops;
     pal->uploadOps = &toyota_upload_ops;
 }
 
@@ -714,4 +716,10 @@ void toyota_ctrl_findcar(uint8_t state)
 void toyota_clear_fault_code(void)
 {
     printf("-> %s\r\n", __func__);
+}
+
+uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
+{
+    *len = 0;
+    return NULL;
 }

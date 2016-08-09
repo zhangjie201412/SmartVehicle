@@ -44,5 +44,6 @@ void send_retry(void);
 void send_heartbeat(uint8_t count);
 void control_rsp(uint32_t cmd_id, uint8_t cmd_type);
 void upload_item(UpdateItem *item);
+void upload_fault_code(FaultCodeValue *value);
 
 #endif

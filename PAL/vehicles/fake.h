@@ -11,6 +11,7 @@ void fake_ctrl_trunk(uint8_t state);
 void fake_ctrl_findcar(uint8_t state);
 
 uint8_t* fake_data_stream(uint8_t pid, uint8_t *len);
+uint32_t *fake_check_fault_code(uint8_t id, uint8_t *len);
 uint8_t fake_engine_on(void);
 void fake_clear_fault_code(void);
 #endif

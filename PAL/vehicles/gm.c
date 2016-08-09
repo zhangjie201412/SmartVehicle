@@ -821,7 +821,38 @@ CanTxMsg gm_keepalive =
     0x01, 0x3e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+CanTxMsg gm_fault_code =
+{
+    0x000, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x03, 0xA9, 0x81, 0x01A, 0x00, 0x00, 0x00, 0x00
+};
+
+uint16_t gm_code_list[FAULT_CODE_MAX_SIZE][2] =
+{
+    //eng_code
+    {0x7e0, 0x5e8},
+    //at_code
+    {0x7e2, 0x5ea},
+    //abs_code
+    {0x243, 0x543},
+    //srs_code
+    {0x247, 0x547},
+    //bcm_code
+    {0x241, 0x541},
+    //ipc_code
+    {0x24c, 0x54c},
+    //eps_code
+    {0x242, 0x542},
+    //ac_code
+    {0x251, 0x551},
+    //tpms
+    {0x241, 0x541},
+};
+
 __IO uint8_t gm_rx_buf[8];
+__IO uint32_t gm_code_val[FAULT_CODE_MAX_SIZE];
 
 void gm_setup(void)
 {
@@ -840,6 +871,8 @@ void gm_setup(void)
     //use fake ebod
     gm_upload_ops.transfer_data_stream = gm_data_stream;
     gm_upload_ops.is_engine_on = gm_engine_on;
+    gm_upload_ops.check_fault_code = gm_check_fault_code;
+
     pal->ops = &gm_ops;
     pal->uploadOps = &gm_upload_ops;
 }
@@ -1059,37 +1092,66 @@ void gm_ctrl_findcar(uint8_t state)
     flexcan_send_frame(&gm_keepalive);
 }
 
-CanTxMsg gm_fault_code =
-{
-    0x000, 0x18db33f1,
-    CAN_ID_STD, CAN_RTR_DATA,
-    8,
-    0x03, 0xA9, 0x81, 0x01A, 0x00, 0x00, 0x00, 0x00
-};
-
-uint16_t gm_code_list[FAULT_CODE_MAX_SIZE][2] =
-{
-    //eng_code
-    {0x7e0, 0x5e8},
-    //at_code
-    {0x7e2, 0x5ea},
-    //abs_code
-    {0x243, 0x543},
-    //srs_code
-    {0x247, 0x547},
-    //bcm_code
-    {0x241, 0x541},
-    //ipc_code
-    {0x24c, 0x54c},
-    //eps_code
-    {0x242, 0x542},
-    //ac_code
-    {0x251, 0x551},
-    //tpms
-    {0x241, 0x541},
-};
-
 void gm_clear_fault_code(void)
 {
     printf("-> %s\r\n", __func__);
+}
+
+uint32_t *gm_check_fault_code(uint8_t id, uint8_t *len)
+{
+    int8_t ret;
+    uint8_t length;
+    CanRxMsg *rxMsg;
+    uint16_t txId = gm_code_list[id][0];
+    uint16_t rxId = gm_code_list[id][1];
+
+    //clear buf
+    memset(gm_code_val, 0x00, FAULT_CODE_MAX_SIZE);
+    gm_fault_code.StdId = txId;
+    ret = flexcan_ioctl(DIR_BI, &gm_fault_code, rxId, 1);
+    if(ret == 1) {
+        rxMsg = flexcan_dump();
+        if(rxMsg == NULL) {
+            *len = 0;
+            return NULL;
+        }
+        //check the return bytes
+        if(rxMsg->Data[0] == 0x81) {
+            gm_code_val[0] = (rxMsg->Data[1] << 8) | rxMsg->Data[2];
+            if(gm_code_val[0] == 0x00) {
+                *len = 1;
+                return gm_code_val;
+            }
+        } else {
+            return NULL;
+        }
+    } else {
+        return NULL;
+    }
+    length = 1;
+    for(;;) {
+        ret = flexcan_ioctl(DIR_INPUT, NULL, rxId, 1);
+        if(ret == 1) {
+            rxMsg = flexcan_dump();
+            if(rxMsg == NULL) {
+                *len = length;
+                break;
+            }
+            //check the return bytes
+            if(rxMsg->Data[0] == 0x81) {
+                length ++;
+                gm_code_val[length - 1] = (rxMsg->Data[1] << 8) | rxMsg->Data[2];
+                if(gm_code_val[length - 1] == 0x00) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+    *len = length;
+
+    return gm_code_val;
 }

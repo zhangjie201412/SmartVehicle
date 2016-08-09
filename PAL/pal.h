@@ -115,7 +115,7 @@ typedef struct {
 
 typedef struct {
     uint8_t fault_code;
-    int code[FAULT_CODE_MAX_SIZE];
+    uint32_t code[FAULT_CODE_MAX_SIZE];
 } FaultCodeValue;
 
 typedef struct {
@@ -144,6 +144,7 @@ typedef struct {
 typedef struct {
     uint8_t (*is_engine_on)(void);
     uint8_t *(*transfer_data_stream)(uint8_t pid, uint8_t *len);
+    uint32_t *(*check_fault_code)(uint8_t id, uint8_t *len);
 } DevUploadOps;
 
 typedef struct {
@@ -169,11 +170,13 @@ typedef struct {
 
 void pal_init(void);
 void pal_do_bcm(uint8_t id, uint8_t val, uint32_t cmd_id);
+void pal_get_fault_code(void);
 void immolock(uint8_t state);
 void set_immo_state(uint8_t state);
 uint8_t check_engine(void);
 
 const char *getPidKey(uint8_t pid);
+const char *getFaultCodeKey(uint8_t code);
 void getDeviceId(void);
 Pal *getPalInstance(void);
 

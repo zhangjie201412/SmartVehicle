@@ -5,7 +5,7 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 ABS_DATA_OILLEVEL	PAL/pal.h	/^    ABS_DATA_OILLEVEL,$/;"	e	enum:__anon48
-ABS_INTERVAL	PAL/pal.c	14;"	d	file:
+ABS_INTERVAL	PAL/pal.c	16;"	d	file:
 ACR	CM3/stm32f10x.h	/^  __IO uint32_t ACR;$/;"	m	struct:__anon19
 ACR_HLFCYA_Mask	FWlib/SRC/stm32f10x_flash.c	47;"	d	file:
 ACR_LATENCY_Mask	FWlib/SRC/stm32f10x_flash.c	46;"	d	file:
@@ -673,7 +673,7 @@ ARG	CM3/stm32f10x.h	/^  __IO uint32_t ARG;$/;"	m	struct:__anon33
 ARR	CM3/stm32f10x.h	/^  __IO uint16_t ARR;$/;"	m	struct:__anon35
 ATACMD_BitNumber	FWlib/SRC/stm32f10x_sdio.c	64;"	d	file:
 AT_DATA_OILTEMP	PAL/pal.h	/^    AT_DATA_OILTEMP = ENG_DATA_SIZE,$/;"	e	enum:__anon48
-AT_INTERVAL	PAL/pal.c	13;"	d	file:
+AT_INTERVAL	PAL/pal.c	15;"	d	file:
 App_TCBInitHook	APP/app.c	/^void App_TCBInitHook(OS_TCB* ptcb)$/;"	f
 App_TaskCreate	APP/app.c	/^static  void App_TaskCreate(void)$/;"	f	file:
 App_TaskCreateHook	APP/app.c	/^void App_TaskCreateHook(OS_TCB* ptcb)$/;"	f
@@ -945,22 +945,23 @@ B2_TO_MM_PAGE_PROG_WITH_ERASE	BSP/m25p16/m25p16.h	23;"	d
 BCM_DATA_BATTCURRENT	PAL/pal.h	/^    BCM_DATA_BATTCURRENT,$/;"	e	enum:__anon48
 BCM_DATA_BATTSTATUS	PAL/pal.h	/^    BCM_DATA_BATTSTATUS,$/;"	e	enum:__anon48
 BCM_DATA_BATTVOLT	PAL/pal.h	/^    BCM_DATA_BATTVOLT,$/;"	e	enum:__anon48
-BCM_DATA_CHARGESTATUS	PAL/pal.h	/^    BCM_DATA_CHARGESTATUS,$/;"	e	enum:__anon48
+BCM_DATA_CHARGESTATUS	PAL/pal.h	/^    BCM_DATA_CHARGESTATUS = BCM_DATA_START,$/;"	e	enum:__anon48
 BCM_DATA_DDA	PAL/pal.h	/^    BCM_DATA_DDA,$/;"	e	enum:__anon48
-BCM_DATA_FRONTFOG	PAL/pal.h	/^	BCM_DATA_FRONTFOG,$/;"	e	enum:__anon48
-BCM_DATA_HAZARD	PAL/pal.h	/^	BCM_DATA_HAZARD,$/;"	e	enum:__anon48
-BCM_DATA_HEADLAMP	PAL/pal.h	/^	BCM_DATA_HEADLAMP,$/;"	e	enum:__anon48
-BCM_DATA_HIGHBEAM	PAL/pal.h	/^	BCM_DATA_HIGHBEAM,$/;"	e	enum:__anon48
-BCM_DATA_LEFTTURN	PAL/pal.h	/^	BCM_DATA_LEFTTURN,$/;"	e	enum:__anon48
-BCM_DATA_LRDA	PAL/pal.h	/^	BCM_DATA_LRDA,$/;"	e	enum:__anon48
+BCM_DATA_FRONTFOG	PAL/pal.h	/^    BCM_DATA_FRONTFOG,$/;"	e	enum:__anon48
+BCM_DATA_HAZARD	PAL/pal.h	/^    BCM_DATA_HAZARD,$/;"	e	enum:__anon48
+BCM_DATA_HEADLAMP	PAL/pal.h	/^    BCM_DATA_HEADLAMP,$/;"	e	enum:__anon48
+BCM_DATA_HIGHBEAM	PAL/pal.h	/^    BCM_DATA_HIGHBEAM,$/;"	e	enum:__anon48
+BCM_DATA_LEFTTURN	PAL/pal.h	/^    BCM_DATA_LEFTTURN,$/;"	e	enum:__anon48
+BCM_DATA_LRDA	PAL/pal.h	/^    BCM_DATA_LRDA,$/;"	e	enum:__anon48
 BCM_DATA_ODO	PAL/pal.h	/^    BCM_DATA_ODO,$/;"	e	enum:__anon48
-BCM_DATA_PARKLAMP	PAL/pal.h	/^	BCM_DATA_PARKLAMP,$/;"	e	enum:__anon48
-BCM_DATA_PDA	PAL/pal.h	/^	BCM_DATA_PDA,$/;"	e	enum:__anon48
-BCM_DATA_REARFOG	PAL/pal.h	/^	BCM_DATA_REARFOG,$/;"	e	enum:__anon48
-BCM_DATA_RIGHTTURN	PAL/pal.h	/^	BCM_DATA_RIGHTTURN,$/;"	e	enum:__anon48
-BCM_DATA_RRDA	PAL/pal.h	/^	BCM_DATA_RRDA,$/;"	e	enum:__anon48
-BCM_DATA_SUNROOF	PAL/pal.h	/^	BCM_DATA_SUNROOF,$/;"	e	enum:__anon48
-BCM_INTERVAL	PAL/pal.c	15;"	d	file:
+BCM_DATA_PARKLAMP	PAL/pal.h	/^    BCM_DATA_PARKLAMP,$/;"	e	enum:__anon48
+BCM_DATA_PDA	PAL/pal.h	/^    BCM_DATA_PDA,$/;"	e	enum:__anon48
+BCM_DATA_REARFOG	PAL/pal.h	/^    BCM_DATA_REARFOG,$/;"	e	enum:__anon48
+BCM_DATA_RIGHTTURN	PAL/pal.h	/^    BCM_DATA_RIGHTTURN,$/;"	e	enum:__anon48
+BCM_DATA_RRDA	PAL/pal.h	/^    BCM_DATA_RRDA,$/;"	e	enum:__anon48
+BCM_DATA_START	PAL/pal.h	/^    BCM_DATA_START,$/;"	e	enum:__anon48
+BCM_DATA_SUNROOF	PAL/pal.h	/^    BCM_DATA_SUNROOF,$/;"	e	enum:__anon48
+BCM_INTERVAL	PAL/pal.c	17;"	d	file:
 BCR_FACCEN_Set	FWlib/SRC/stm32f10x_fsmc.c	50;"	d	file:
 BCR_MBKEN_Reset	FWlib/SRC/stm32f10x_fsmc.c	49;"	d	file:
 BCR_MBKEN_Set	FWlib/SRC/stm32f10x_fsmc.c	48;"	d	file:
@@ -2498,6 +2499,7 @@ CFR_OFFSET	FWlib/SRC/stm32f10x_wwdg.c	50;"	d	file:
 CFR_WDGTB_Mask	FWlib/SRC/stm32f10x_wwdg.c	60;"	d	file:
 CFR_W_Mask	FWlib/SRC/stm32f10x_wwdg.c	61;"	d	file:
 CFSR	CM3/core_cm3.h	/^  __IO uint32_t CFSR;                         \/*!< Offset: 0x28  Configurable Fault Status Register                    *\/$/;"	m	struct:__anon39
+CHECK_ENGINE	PAL/pal.c	11;"	d	file:
 CID0	CM3/core_cm3.h	/^  __I  uint32_t CID0;                         \/*!< Offset:       ITM Component  Identification Register #0 *\/$/;"	m	struct:__anon41
 CID1	CM3/core_cm3.h	/^  __I  uint32_t CID1;                         \/*!< Offset:       ITM Component  Identification Register #1 *\/$/;"	m	struct:__anon41
 CID2	CM3/core_cm3.h	/^  __I  uint32_t CID2;                         \/*!< Offset:       ITM Component  Identification Register #2 *\/$/;"	m	struct:__anon41
@@ -2524,12 +2526,13 @@ CNDTR	CM3/stm32f10x.h	/^  __IO uint32_t CNDTR;$/;"	m	struct:__anon15
 CNT	CM3/stm32f10x.h	/^  __IO uint16_t CNT;$/;"	m	struct:__anon35
 CNTH	CM3/stm32f10x.h	/^  __IO uint16_t CNTH;$/;"	m	struct:__anon32
 CNTL	CM3/stm32f10x.h	/^  __IO uint16_t CNTL;$/;"	m	struct:__anon32
+CONNECTION_TIMEOUT	APP/app.h	5;"	d
 CONTROL_DOOR	PAL/pal.h	/^    CONTROL_DOOR,$/;"	e	enum:__anon47
 CONTROL_END	PAL/pal.h	/^    CONTROL_END,$/;"	e	enum:__anon47
 CONTROL_FINDCAR	PAL/pal.h	/^    CONTROL_FINDCAR,$/;"	e	enum:__anon47
 CONTROL_IMMOLOCK	PAL/pal.h	/^    CONTROL_IMMOLOCK,$/;"	e	enum:__anon47
 CONTROL_LIGHT	PAL/pal.h	/^    CONTROL_LIGHT,$/;"	e	enum:__anon47
-CONTROL_SUNFLOOR	PAL/pal.h	/^    CONTROL_SUNFLOOR,$/;"	e	enum:__anon47
+CONTROL_SUNROOF	PAL/pal.h	/^    CONTROL_SUNROOF,$/;"	e	enum:__anon47
 CONTROL_TRUNK	PAL/pal.h	/^    CONTROL_TRUNK,$/;"	e	enum:__anon47
 CONTROL_WINDOW	PAL/pal.h	/^    CONTROL_WINDOW = 0,$/;"	e	enum:__anon47
 CPAR	CM3/stm32f10x.h	/^  __IO uint32_t CPAR;$/;"	m	struct:__anon15
@@ -3227,7 +3230,7 @@ DEF_TIME_NBR_uS_PER_SEC	uCOS-II/uC-LIB/lib_def.h	327;"	d
 DEF_TRUE	uCOS-II/uC-LIB/lib_def.h	127;"	d
 DEF_YES	uCOS-II/uC-LIB/lib_def.h	130;"	d
 DEMCR	CM3/core_cm3.h	/^  __IO uint32_t DEMCR;                        \/*!< Offset: 0x0C  Debug Exception and Monitor Control Register *\/$/;"	m	struct:__anon45
-DEVICE_ID_ADDRESS	PAL/pal.c	17;"	d	file:
+DEVICE_ID_ADDRESS	PAL/pal.c	19;"	d	file:
 DFR	CM3/core_cm3.h	/^  __I  uint32_t DFR;                          \/*!< Offset: 0x48  Debug Feature Register                                *\/$/;"	m	struct:__anon39
 DFSR	CM3/core_cm3.h	/^  __IO uint32_t DFSR;                         \/*!< Offset: 0x30  Debug Fault Status Register                           *\/$/;"	m	struct:__anon39
 DHCSR	CM3/core_cm3.h	/^  __IO uint32_t DHCSR;                        \/*!< Offset: 0x00  Debug Halting Control and Status Register    *\/$/;"	m	struct:__anon45
@@ -3749,21 +3752,21 @@ EMR	CM3/stm32f10x.h	/^  __IO uint32_t EMR;$/;"	m	struct:__anon18
 ENABLE	CM3/stm32f10x.h	/^typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;$/;"	e	enum:__anon3
 ENCMDCOMPL_BitNumber	FWlib/SRC/stm32f10x_sdio.c	56;"	d	file:
 ENG_DATA_AF	PAL/pal.h	/^    ENG_DATA_AF,$/;"	e	enum:__anon48
-ENG_DATA_APP	PAL/pal.h	/^	ENG_DATA_APP,$/;"	e	enum:__anon48
+ENG_DATA_APP	PAL/pal.h	/^    ENG_DATA_APP,$/;"	e	enum:__anon48
 ENG_DATA_ECT	PAL/pal.h	/^    ENG_DATA_ECT,$/;"	e	enum:__anon48
-ENG_DATA_ERT	PAL/pal.h	/^	ENG_DATA_ERT,$/;"	e	enum:__anon48
+ENG_DATA_ERT	PAL/pal.h	/^    ENG_DATA_ERT,$/;"	e	enum:__anon48
 ENG_DATA_FCLS	PAL/pal.h	/^    ENG_DATA_FCLS,$/;"	e	enum:__anon48
 ENG_DATA_FUEL	PAL/pal.h	/^    ENG_DATA_FUEL,$/;"	e	enum:__anon48
 ENG_DATA_FUELLEVEL	PAL/pal.h	/^    ENG_DATA_FUELLEVEL,$/;"	e	enum:__anon48
 ENG_DATA_FUELTANK	PAL/pal.h	/^    ENG_DATA_FUELTANK,$/;"	e	enum:__anon48
 ENG_DATA_HO2S1	PAL/pal.h	/^    ENG_DATA_HO2S1,$/;"	e	enum:__anon48
 ENG_DATA_HO2S2	PAL/pal.h	/^    ENG_DATA_HO2S2,$/;"	e	enum:__anon48
-ENG_DATA_IAT	PAL/pal.h	/^	ENG_DATA_IAT,$/;"	e	enum:__anon48
+ENG_DATA_IAT	PAL/pal.h	/^    ENG_DATA_IAT,$/;"	e	enum:__anon48
 ENG_DATA_IGTIMING	PAL/pal.h	/^    ENG_DATA_IGTIMING,$/;"	e	enum:__anon48
 ENG_DATA_INJECTPULSE	PAL/pal.h	/^    ENG_DATA_INJECTPULSE,$/;"	e	enum:__anon48
 ENG_DATA_KEYSTATUS	PAL/pal.h	/^    ENG_DATA_KEYSTATUS,$/;"	e	enum:__anon48
-ENG_DATA_LOAD	PAL/pal.h	/^	ENG_DATA_LOAD,$/;"	e	enum:__anon48
-ENG_DATA_LTFT	PAL/pal.h	/^	ENG_DATA_LTFT,$/;"	e	enum:__anon48
+ENG_DATA_LOAD	PAL/pal.h	/^    ENG_DATA_LOAD,$/;"	e	enum:__anon48
+ENG_DATA_LTFT	PAL/pal.h	/^    ENG_DATA_LTFT,$/;"	e	enum:__anon48
 ENG_DATA_MAF	PAL/pal.h	/^    ENG_DATA_MAF,$/;"	e	enum:__anon48
 ENG_DATA_MAP	PAL/pal.h	/^    ENG_DATA_MAP,$/;"	e	enum:__anon48
 ENG_DATA_MISFIRE1	PAL/pal.h	/^    ENG_DATA_MISFIRE1,$/;"	e	enum:__anon48
@@ -3778,10 +3781,10 @@ ENG_DATA_OILPRESSURE	PAL/pal.h	/^    ENG_DATA_OILPRESSURE,$/;"	e	enum:__anon48
 ENG_DATA_OILTEMP	PAL/pal.h	/^    ENG_DATA_OILTEMP,$/;"	e	enum:__anon48
 ENG_DATA_RPM	PAL/pal.h	/^    ENG_DATA_RPM,$/;"	e	enum:__anon48
 ENG_DATA_SIZE	PAL/pal.h	/^    ENG_DATA_SIZE,$/;"	e	enum:__anon48
-ENG_DATA_STFT	PAL/pal.h	/^	ENG_DATA_STFT,$/;"	e	enum:__anon48
-ENG_DATA_TP	PAL/pal.h	/^	ENG_DATA_TP,$/;"	e	enum:__anon48
+ENG_DATA_STFT	PAL/pal.h	/^    ENG_DATA_STFT,$/;"	e	enum:__anon48
+ENG_DATA_TP	PAL/pal.h	/^    ENG_DATA_TP,$/;"	e	enum:__anon48
 ENG_DATA_VS	PAL/pal.h	/^    ENG_DATA_VS,$/;"	e	enum:__anon48
-ENG_INTERVAL	PAL/pal.c	12;"	d	file:
+ENG_INTERVAL	PAL/pal.c	14;"	d	file:
 ERROR	CM3/stm32f10x.h	/^typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;$/;"	e	enum:__anon4
 ESR	CM3/stm32f10x.h	/^  __IO uint32_t ESR;$/;"	m	struct:__anon10
 ESR	CM3/stm32f10x.h	/^  __IO uint32_t ESR;$/;"	m	struct:__anon11
@@ -5657,7 +5660,7 @@ GTPR_LSB_Mask	FWlib/SRC/stm32f10x_usart.c	78;"	d	file:
 GTPR_MSB_Mask	FWlib/SRC/stm32f10x_usart.c	79;"	d	file:
 GmDataStream	PAL/vehicles/gm.h	/^} GmDataStream;$/;"	t	typeref:struct:__anon60
 HCLK_Frequency	FWlib/inc/stm32f10x_rcc.h	/^  uint32_t HCLK_Frequency;    \/*!< returns HCLK clock frequency expressed in Hz *\/$/;"	m	struct:__anon80
-HEARTBEAT_INTERVAL	PAL/transmit.c	8;"	d	file:
+HEARTBEAT_INTERVAL	PAL/transmit.c	9;"	d	file:
 HEARTBEAT_THREAD_PRIO	APP/app_cfg.h	61;"	d
 HFSR	CM3/core_cm3.h	/^  __IO uint32_t HFSR;                         \/*!< Offset: 0x2C  Hard Fault Status Register                            *\/$/;"	m	struct:__anon39
 HSEStartUp_TimeOut	CM3/stm32f10x.h	465;"	d
@@ -5942,7 +5945,7 @@ IE_BitNumber	FWlib/SRC/stm32f10x_cec.c	58;"	d	file:
 IFCR	CM3/stm32f10x.h	/^  __IO uint32_t IFCR;$/;"	m	struct:__anon16
 IMCR	CM3/core_cm3.h	/^  __IO uint32_t IMCR;                         \/*!< Offset:       ITM Integration Mode Control Register     *\/$/;"	m	struct:__anon41
 IMMOLOCK_TASK_PRIO	APP/app_cfg.h	53;"	d
-IMMOLOCK_TASK_STK_SIZE	PAL/pal.c	21;"	d	file:
+IMMOLOCK_TASK_STK_SIZE	PAL/pal.c	23;"	d	file:
 IMR	CM3/stm32f10x.h	/^  __IO uint32_t IMR;$/;"	m	struct:__anon18
 INAK_TimeOut	FWlib/SRC/stm32f10x_can.c	99;"	d	file:
 INT16S	uCOS-II/Ports/os_cpu.h	/^typedef signed   short INT16S;                   \/* Signed   16 bit quantity                           *\/$/;"	t
@@ -6606,6 +6609,7 @@ MSG_TYPE_HEARTBEAT	PAL/transmit.h	16;"	d
 MSG_TYPE_HEARTBEAT_RSP	PAL/transmit.h	17;"	d
 MSG_TYPE_LOGIN	PAL/transmit.h	22;"	d
 MSG_TYPE_LOGIN_RSP	PAL/transmit.h	23;"	d
+MSG_TYPE_RETRY	PAL/transmit.h	25;"	d
 MSG_TYPE_UPLOAD	PAL/transmit.h	20;"	d
 MSG_TYPE_VEHICLE_TYPE	PAL/transmit.h	24;"	d
 MSR	CM3/stm32f10x.h	/^  __IO uint32_t MSR;$/;"	m	struct:__anon10
@@ -10029,7 +10033,7 @@ TPE_BitNumber	FWlib/SRC/stm32f10x_bkp.c	57;"	d	file:
 TPIE_BitNumber	FWlib/SRC/stm32f10x_bkp.c	64;"	d	file:
 TPR	CM3/core_cm3.h	/^  __IO uint32_t TPR;                          \/*!< Offset:       ITM Trace Privilege Register              *\/$/;"	m	struct:__anon41
 TRANSMIT_TASK_PRIO	APP/app_cfg.h	60;"	d
-TRANSMIT_TASK_STK_SIZE	PAL/pal.c	18;"	d	file:
+TRANSMIT_TASK_STK_SIZE	PAL/pal.c	20;"	d	file:
 TRISE	CM3/stm32f10x.h	/^  __IO uint16_t TRISE;$/;"	m	struct:__anon28
 TRUE	CM3/stm32f10x.h	/^typedef enum {FALSE = 0, TRUE = !FALSE} bool;$/;"	e	enum:__anon1
 TSOM_BitNumber	FWlib/SRC/stm32f10x_cec.c	65;"	d	file:
@@ -10062,8 +10066,8 @@ UART5_IRQHandler	APP/stm32f10x_it.c	/^void UART5_IRQHandler(void)$/;"	f
 UART5_IRQn	CM3/stm32f10x.h	/^  UART5_IRQn                  = 53,     \/*!< UART5 global Interrupt                               *\/$/;"	e	enum:IRQn
 UNSUPPORTED	PAL/pal.h	9;"	d
 UPLOAD_TASK_PRIO	APP/app_cfg.h	62;"	d
-UPLOAD_TASK_STK_SIZE	PAL/pal.c	24;"	d	file:
-UPLOAD_THREAD_INTERVAL	PAL/pal.c	11;"	d	file:
+UPLOAD_TASK_STK_SIZE	PAL/pal.c	26;"	d	file:
+UPLOAD_THREAD_INTERVAL	PAL/pal.c	13;"	d	file:
 USART1	CM3/stm32f10x.h	1356;"	d
 USART1_BASE	CM3/stm32f10x.h	1263;"	d
 USART1_IRQHandler	APP/stm32f10x_it.c	/^void USART1_IRQHandler(void)$/;"	f
@@ -11076,7 +11080,7 @@ flexcan_dump	BSP/flexcan/flexcan.c	/^CanRxMsg *flexcan_dump(void)$/;"	f
 flexcan_filter	BSP/flexcan/flexcan.c	/^void flexcan_filter(u32 id1, u32 id2, u32 mid1, u32 mid2)$/;"	f
 flexcan_gpio_init	BSP/flexcan/flexcan.c	/^void flexcan_gpio_init(void)$/;"	f
 flexcan_init	BSP/flexcan/flexcan.c	/^void flexcan_init(u8 velocity)$/;"	f
-flexcan_ioctl	BSP/flexcan/flexcan.c	/^uint8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount)$/;"	f
+flexcan_ioctl	BSP/flexcan/flexcan.c	/^int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCount)$/;"	f
 flexcan_nvic_init	BSP/flexcan/flexcan.c	/^void flexcan_nvic_init(void)$/;"	f
 flexcan_reset	BSP/flexcan/flexcan.c	/^void flexcan_reset(void)$/;"	f
 flexcan_rx_callack	BSP/flexcan/flexcan.c	/^void flexcan_rx_callack(void)$/;"	f
@@ -11088,6 +11092,7 @@ g_rxMsg	BSP/flexcan/flexcan.c	/^static __IO CanRxMsg g_rxMsg[RX_PACKAGE_SIZE];$/
 getDeviceId	PAL/pal.c	/^void getDeviceId(void)$/;"	f
 getPalInstance	PAL/pal.c	/^Pal *getPalInstance(void)$/;"	f
 getPidKey	PAL/pal.c	/^const char *getPidKey(uint8_t pid)$/;"	f
+getTicks	APP/app.c	/^uint32_t getTicks(void) {$/;"	f
 gmDataStream	PAL/vehicles/gm.c	/^GmDataStream gmDataStream[PID_SIZE] =$/;"	v
 gmSupportItems	PAL/vehicles/gm.c	/^PidSupportItem gmSupportItems[PID_SIZE] =$/;"	v
 gm_clear_fault_code	PAL/vehicles/gm.c	/^void gm_clear_fault_code(void)$/;"	f
@@ -11104,8 +11109,8 @@ gm_engine_on	PAL/vehicles/gm.c	/^uint8_t gm_engine_on(void)$/;"	f
 gm_findcar_off	PAL/vehicles/gm.c	/^CanTxMsg gm_findcar_off[2] = {$/;"	v
 gm_findcar_on	PAL/vehicles/gm.c	/^CanTxMsg gm_findcar_on[2] = {$/;"	v
 gm_keepalive	PAL/vehicles/gm.c	/^CanTxMsg gm_keepalive =$/;"	v
-gm_lamp_off	PAL/vehicles/gm.c	/^CanTxMsg gm_lamp_off = $/;"	v
-gm_lamp_on	PAL/vehicles/gm.c	/^CanTxMsg gm_lamp_on = $/;"	v
+gm_lamp_off	PAL/vehicles/gm.c	/^CanTxMsg gm_lamp_off =$/;"	v
+gm_lamp_on	PAL/vehicles/gm.c	/^CanTxMsg gm_lamp_on =$/;"	v
 gm_ops	PAL/vehicles/gm.c	/^DevCtrlOps gm_ops;$/;"	v
 gm_rx_buf	PAL/vehicles/gm.c	/^__IO uint8_t gm_rx_buf[8];$/;"	v
 gm_setup	PAL/vehicles/gm.c	/^void gm_setup(void)$/;"	f
@@ -11121,6 +11126,7 @@ go_reboot	APP/app.c	/^void go_reboot(void)$/;"	f
 gps_init	BSP/gps/gps.c	/^void gps_init(void)$/;"	f
 gps_send	BSP/gps/gps.c	/^void gps_send(uint8_t c)$/;"	f
 gps_setup	BSP/gps/gps.c	/^void gps_setup(void)$/;"	f
+gps_test	BSP/gps/gps.c	/^void gps_test(void)$/;"	f
 gps_write	BSP/gps/gps.c	/^void gps_write(uint8_t *buf, uint16_t size)$/;"	f
 gpssta	BSP/gps/gps.h	/^    u8 gpssta;					\/\/GPS状态:0,未定位;1,非差分定位;2,差分定位;6,正在估算.$/;"	m	struct:__anon103
 handle	BSP/bsp.c	/^    int handle;$/;"	m	struct:__FILE	file:
@@ -11297,6 +11303,8 @@ sec	BSP/gps/gps.h	/^    u8 sec; 	\/\/秒钟$/;"	m	struct:__anon102
 send	BSP/sim900/sim900.c	/^void send(uint8_t c)$/;"	f
 sendStdTxMsg	PAL/utils.c	/^void sendStdTxMsg(StdTxMsg *msg)$/;"	f
 send_heartbeat	PAL/transmit.c	/^void send_heartbeat(uint8_t count)$/;"	f
+send_retry	PAL/transmit.c	/^void send_retry(void)$/;"	f
+setTicks	APP/app.c	/^void setTicks(uint32_t t) {$/;"	f
 set_immo_state	PAL/pal.c	/^void set_immo_state(uint8_t state) {$/;"	f
 sim900_connect	BSP/sim900/sim900.c	/^void sim900_connect(void)$/;"	f
 sim900_init	BSP/sim900/sim900.c	/^void sim900_init(void)$/;"	f
@@ -11328,6 +11336,7 @@ task_process_atcmd_stk_size	APP/app_cfg.h	68;"	d
 task_report_work_prio	APP/app_cfg.h	57;"	d
 task_report_work_stk_size	APP/app_cfg.h	70;"	d
 thread_sim900_rx_entry	BSP/sim900/sim900.c	/^static void thread_sim900_rx_entry(void *parg)$/;"	f	file:
+ticks	APP/app.c	/^__IO uint32_t ticks = 0;$/;"	v
 timeref	BSP/gps/gps.h	/^    u16 timeref;				\/\/参考时间：0=UTC Time；1=GPS Time；$/;"	m	struct:__anon108
 timeref	BSP/gps/gps.h	/^    u8 timeref;			   		\/\/参考时间:0,UTC时间;1,GPS时间;2,当地时间.$/;"	m	struct:__anon107
 toyotaStdDs	PAL/vehicles/toyota.c	/^StdDataStream toyotaStdDs[PID_SIZE] =$/;"	v
@@ -11364,7 +11373,7 @@ transmitTaskStk	PAL/pal.c	/^OS_STK transmitTaskStk[TRANSMIT_TASK_STK_SIZE];$/;"	
 transmit_init	PAL/transmit.c	/^void transmit_init(void)$/;"	f
 transmit_thread	PAL/pal.c	/^static void transmit_thread(void *pargs)$/;"	f	file:
 txId	PAL/pal.h	/^    uint16_t txId;$/;"	m	struct:__anon58
-txId	PAL/vehicles/gm.h	/^    uint16_t txId;$/;"	m	struct:__anon60
+txId	PAL/vehicles/gm.h	/^    uint16_t txId[2];$/;"	m	struct:__anon60
 tx_flag	APP/globals.h	/^EXT volatile unsigned char rec_f,tx_flag;$/;"	v
 txready	BSP/gps/gps.h	/^    u16 txready;				\/\/TX Ready引脚设置,默认为0$/;"	m	struct:__anon106
 type	BSP/json/cJSON.h	/^        int type;					\/* The type of the item, as above. *\/$/;"	m	struct:cJSON

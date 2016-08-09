@@ -260,6 +260,7 @@ void fake_setup(void)
 
     fake_upload_ops.transfer_data_stream = fake_data_stream;
     fake_upload_ops.is_engine_on = fake_engine_on;
+    fake_upload_ops.check_fault_code = fake_check_fault_code;
 
     pal->ops = &fake_ops;
     pal->uploadOps = &fake_upload_ops;
@@ -309,6 +310,12 @@ uint8_t* fake_data_stream(uint8_t pid, uint8_t *len)
     } else {
         return NULL;
     }
+}
+
+uint32_t *fake_check_fault_code(uint8_t id, uint8_t *len)
+{
+    *len = 0;
+    return NULL;
 }
 
 void fake_ctrl_window(uint8_t state)
