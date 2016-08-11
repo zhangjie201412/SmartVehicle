@@ -275,10 +275,10 @@ void upload_fault_code(FaultCodeValue *value)
     memset(val_buf, 0x00, 100);
     for(i = 0; i < value->count; i++) {
         if(i == 0) {
-            n = sprintf(val_buf + index, "%04x", item->data[i]);
+            n = sprintf(val_buf + index, "%04x", value->code[i]);
             index += n;
         } else {
-            n = sprintf(val_buf + index, ",%04x", item->data[i]);
+            n = sprintf(val_buf + index, ",%04x", value->code[i]);
             index += n;
         }
     }

@@ -797,10 +797,11 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
     CanRxMsg *rxMsg;
 
     memset(toyota_fault_data, 0x00, 100);
+    memset(toyota_code_val, 0x00, FAULT_CODE_MAX_SIZE);
 
-    rxId = toyotaStdFault[i].StdId + 8;
+    rxId = toyota_fault_code[i].StdId + 8;
 
-    ret = flexcan_ioctl(DIR_BI, &toyotaStdFault[id], rxId, 1);
+    ret = flexcan_ioctl(DIR_BI, &toyota_fault_code[id], rxId, 1);
     if(ret > 0) {
         rxMsg = flexcan_dump();
         //check if the receive msg type is needed
@@ -841,10 +842,10 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
         //parse fault code
         *len = toyota_fault_data[0];
         for(i = 0; i < *len; i++) {
-            toyota_fault_code[i] =
+            toyota_code_val[i] =
                 (toyota_fault_data[i * 3 + 1] << 8) | (toyota_fault_data[i * 3 + 2]);
         }
-        return toyota_fault_code;
+        return toyota_code_val;
     } else {
         *len = 0;
         return NULL;
