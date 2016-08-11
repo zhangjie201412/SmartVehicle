@@ -253,6 +253,7 @@ void pal_get_fault_code(void)
         for(j = 0; j < len; j++) {
             value.code[j] = code[j];
         }
+        value.count = len;
 
         printf("%s: %s\t", __func__, getFaultCodeKey(i));
         for(j = 0; j < len; j++) {

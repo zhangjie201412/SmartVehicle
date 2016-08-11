@@ -20,6 +20,7 @@
 #define MSG_TYPE_CTRL               2
 #define MSG_TYPE_CTRL_RSP           3
 #define MSG_TYPE_UPLOAD             4
+#define MSG_TYPE_FAULT_CODE         5
 
 #define MSG_TYPE_LOCATION           7
 #define MSG_TYPE_LOGIN              8

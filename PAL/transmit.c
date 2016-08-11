@@ -261,7 +261,36 @@ void upload_item(UpdateItem *item)
 
 void upload_fault_code(FaultCodeValue *value)
 {
+    cJSON *root = cJSON_CreateObject();
+    char *out;
+    uint16_t length;
+    char val_buf[100];
+    uint8_t i;
+    uint8_t index = 0, n = 0;
 
+    getDeviceId();
+    cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
+    cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_FAULT_CODE);
+    //make value
+    memset(val_buf, 0x00, 100);
+    for(i = 0; i < value->count; i++) {
+        if(i == 0) {
+            n = sprintf(val_buf + index, "%04x", item->data[i]);
+            index += n;
+        } else {
+            n = sprintf(val_buf + index, ",%04x", item->data[i]);
+            index += n;
+        }
+    }
+    cJSON_AddStringToObject(root, getFaultCodeKey(value->fault_code), val_buf);
+
+    out = cJSON_Print(root);
+    length = strlen(out);
+    printf("%s\r\n", out);
+    sim900_write((uint8_t *)out, length);
+
+    cJSON_Delete(root);
+    myfree(out);
 }
 
 void upload_location(uint32_t longitude, uint32_t latitude)
@@ -278,7 +307,7 @@ void upload_location(uint32_t longitude, uint32_t latitude)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    printf("%s\r\n", out);
+    //printf("%s\r\n", out);
     sim900_write((uint8_t *)out, length);
 
     cJSON_Delete(root);

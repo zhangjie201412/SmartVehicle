@@ -494,6 +494,66 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     },
 };
 
+CanTxMsg toyota_fault_code[FAULT_CODE_MAX_SIZE] =
+{
+    //eng_code
+    {
+        0x7E0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0xb0, 0x0, 0x00, 0x00, 0x00, 0x00
+    },
+    //at_code
+    {
+        0x7E0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0xb0, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //abs_code
+    {
+        0x7B0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //srs_code
+    {
+        0x780, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //bcm_code
+    {
+        0x750, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x04, 0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00
+    },
+    //ipc_code
+    {
+        0x7C0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //eps_code
+    {
+        0x7a1, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //ac_code
+    {
+        0x7c4, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+};
+
 void toyota_keepalive(void)
 {
     flexcan_send_frame(&toyota_keepalive_normal);
@@ -718,8 +778,75 @@ void toyota_clear_fault_code(void)
     printf("-> %s\r\n", __func__);
 }
 
+__IO uint32_t toyota_code_val[FAULT_CODE_MAX_SIZE];
+__IO uint8_t toyota_fault_data[100];
+
 uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
 {
-    *len = 0;
-    return NULL;
+    uint8_t i, j;
+    int8_t ret;
+    uint8_t valid_len;
+    uint8_t valid_index = 0;
+    uint8_t data_type;
+    uint8_t offset;
+    uint8_t l_bytes = 0;
+    uint8_t l_packages = 0;
+    uint8_t sub_cmd = 0;
+    uint16_t rxId;
+
+    CanRxMsg *rxMsg;
+
+    memset(toyota_fault_data, 0x00, 100);
+
+    rxId = toyotaStdFault[i].StdId + 8;
+
+    ret = flexcan_ioctl(DIR_BI, &toyotaStdFault[id], rxId, 1);
+    if(ret > 0) {
+        rxMsg = flexcan_dump();
+        //check if the receive msg type is needed
+        //check if this recv package is a long package
+        if(rxMsg->Data[0] == 0x10) {
+            l_bytes = rxMsg->Data[1];
+            l_packages = 0;
+            l_packages = (l_bytes - 6) / 7;
+            if((l_bytes - 6) % 7 > 0) {
+                l_packages += 1;
+            }
+            for(i = 3; i < 8; i++) {
+                toyota_fault_data[i - 3] = rxMsg->Data[i];
+            }
+            //send continue package
+            ret = flexcan_ioctl(DIR_BI, &toyota_continue_package,
+                    rxId, l_packages);
+            if(ret == l_packages) {
+                for(i = 0;i < ret; i++) {
+                    rxMsg = flexcan_dump();
+                    for(j = 0; j < 7; j++) {
+                        toyota_fault_data[5 + i * 7 + j] = rxMsg->Data[j + 1];
+                    }
+                }
+            } else {
+                printf("error: ret = %d\r\n", ret);
+                *len = 0;
+                return NULL;
+            }
+        }
+        //short package
+        else {
+            //shift the valid data to head
+            for(i = 2; i < 8; i++) {
+                toyota_fault_data[i - 2] = rxMsg->Data[i];
+            }
+        }
+        //parse fault code
+        *len = toyota_fault_data[0];
+        for(i = 0; i < *len; i++) {
+            toyota_fault_code[i] =
+                (toyota_fault_data[i * 3 + 1] << 8) | (toyota_fault_data[i * 3 + 2]);
+        }
+        return toyota_fault_code;
+    } else {
+        *len = 0;
+        return NULL;
+    }
 }

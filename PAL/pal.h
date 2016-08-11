@@ -115,6 +115,7 @@ typedef struct {
 
 typedef struct {
     uint8_t fault_code;
+    uint8_t count;
     uint32_t code[FAULT_CODE_MAX_SIZE];
 } FaultCodeValue;
 
