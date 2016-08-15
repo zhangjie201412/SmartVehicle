@@ -86,15 +86,15 @@ UpdateItem updateList[PID_SIZE];
 
 FaultCodeItem faultCodeList[FAULT_CODE_SIZE] =
 {
-    {FAULT_ENGINE_CODE, "eng_code"},
-    {FAULT_AT_CODE, "at_code"},
-    {FAULT_ABS_CODE, "abs_code"},
-    {FAULT_SRS_CODE, "srs_code"},
-    {FAULT_BCM_CODE, "bcm_code"},
-    {FAULT_IPC_CODE, "ipc_code"},
-    {FAULT_EPS_CODE, "eps_code"},
-    {FAULT_AC_CODE, "ac_code"},
-    {FAULT_TPMS_CODE, "tpms_code"},
+    {FAULT_ENGINE_CODE, "powertrain"},
+    {FAULT_AT_CODE, "powertrain"},
+    {FAULT_ABS_CODE, "classis"},
+    {FAULT_SRS_CODE, "body_system"},
+    {FAULT_BCM_CODE, "body_system"},
+    {FAULT_IPC_CODE, "body_system"},
+    {FAULT_EPS_CODE, "chassis"},
+    {FAULT_AC_CODE, "body_system"},
+    {FAULT_TPMS_CODE, "body_system"},
 };
 
 CanTxMsg engineAlive =
