@@ -368,7 +368,7 @@ void upload_thread(void *unused)
             data = mPal.uploadOps->transfer_data_stream(i, &len);
             if(data == NULL) {
                 //if current eng data failed, skip eng datas
-                i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
+                //i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
                 //if current bcm data failed, skip bcm datas
                 //if(i >= BCM_DATA_START)
                 //    break;
