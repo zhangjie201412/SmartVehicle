@@ -370,8 +370,8 @@ void upload_thread(void *unused)
                 //if current eng data failed, skip eng datas
                 i = (i < ENG_DATA_SIZE) ? ENG_DATA_SIZE : i;
                 //if current bcm data failed, skip bcm datas
-                if(i >= BCM_DATA_START)
-                    break;
+                //if(i >= BCM_DATA_START)
+                //    break;
                 //i = (i >= BCM_DATA_START) ? 0 : i;
                 continue;
             }
