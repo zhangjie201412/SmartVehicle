@@ -282,8 +282,10 @@ uint8_t* fake_data_stream(uint8_t pid, uint8_t *len)
     CanRxMsg *rxMsg;
 
     //check if this pid supported
-    if(fakeSupportItems[pid].support != SUPPORTED)
+    if(fakeSupportItems[pid].support != SUPPORTED) {
+        *len = UNSUPPORTED_LEN
         return NULL;
+    }
 
     valid_len = fakeStdDs[pid].valid_len;
     offset = fakeStdDs[pid].offset;

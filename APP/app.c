@@ -118,9 +118,11 @@ static  void App_TaskStart(void* p_arg)
         if(need_reboot == 0)
             iwdg_feed();
         ticks += 5;
+#ifdef PROP_HAS_GPRS
         if(ticks >= CONNECTION_TIMEOUT) {
             go_reboot();
         }
+#endif
     }
 }
 

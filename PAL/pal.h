@@ -7,6 +7,7 @@
 #define FAULT_CODE_MAX_SIZE 10
 #define SUPPORTED           1
 #define UNSUPPORTED         0
+#define UNSUPPORTED_LEN     0xff
 
 typedef enum {
     CONTROL_WINDOW = 0,

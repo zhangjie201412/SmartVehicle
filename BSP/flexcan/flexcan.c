@@ -7,6 +7,7 @@
 static CanRxMsg g_rxMsg[RX_PACKAGE_SIZE];
 static uint8_t w_off, r_off;
 static CanRxMsg m_rxMsg;
+static uint16_t filter_id = 0x00;
 OS_EVENT *lock;
 OS_EVENT *mailbox;
 
@@ -140,8 +141,10 @@ int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCoun
 
     if(dir & DIR_INPUT) {
         flexcan_filter(rxId, rxId, rxId | 0xff, rxId | 0xff);
+        filter_id = rxId;
     } else {
         flexcan_filter(0x00, 0x00, 0x00ff, 0x00ff);
+        filter_id = 0x00;
     }
     if(dir & DIR_OUTPUT) {
         flexcan_send_frame(txMsg);
@@ -202,6 +205,7 @@ int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCoun
 
     //filter none of can id
     flexcan_filter(0x00, 0x00, 0x00ff, 0x00ff);
+    filter_id = 0x00;
 
     return ret;
 }
@@ -245,5 +249,10 @@ void flexcan_reset(void)
 void flexcan_rx_callack(void)
 {
     CAN_Receive(CAN1, CAN_FIFO0, &m_rxMsg);
-    OSMboxPost(mailbox, &m_rxMsg);
+    if(m_rxMsg->StdId == filter_id) {
+        OSMboxPost(mailbox, &m_rxMsg);
+    } else {
+        //drop
+        //TODO:???
+    }
 }

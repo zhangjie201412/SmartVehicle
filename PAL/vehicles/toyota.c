@@ -604,6 +604,7 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
 
     //check if this pid supported
     if(toyotaSupportItems[pid].support != SUPPORTED) {
+        *len = UNSUPPORTED_LEN;
         return NULL;
     }
 

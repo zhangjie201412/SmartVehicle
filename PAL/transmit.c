@@ -28,13 +28,16 @@ static uint8_t connected = FALSE;
 
 void transmit_init(void)
 {
+#ifdef PROP_HAS_GPS
+    gps_init();
+    gps_setup();
+//    gps_test();
+#endif
+#ifdef PROP_HAS_GPRS
     //init for gprs
     sim900_init();
     //connect the server
     sim900_connect();
-    gps_init();
-    gps_setup();
-//    gps_test();
     //register callback
     sim900_register_recv(recv_callback);
     //run heart beat thread
@@ -43,6 +46,7 @@ void transmit_init(void)
             HEARTBEAT_THREAD_PRIO);
     heartbeat = 0;
     connected = FALSE;
+#endif
 }
 
 uint8_t isConnected(void)
