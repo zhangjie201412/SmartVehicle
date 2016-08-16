@@ -123,6 +123,7 @@ static  void App_TaskStart(void* p_arg)
             go_reboot();
         }
 #endif
+        immo_process();
     }
 }
 

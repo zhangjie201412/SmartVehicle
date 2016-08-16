@@ -249,7 +249,7 @@ void flexcan_reset(void)
 void flexcan_rx_callack(void)
 {
     CAN_Receive(CAN1, CAN_FIFO0, &m_rxMsg);
-    if(m_rxMsg->StdId == filter_id) {
+    if(m_rxMsg.StdId == filter_id) {
         OSMboxPost(mailbox, &m_rxMsg);
     } else {
         //drop

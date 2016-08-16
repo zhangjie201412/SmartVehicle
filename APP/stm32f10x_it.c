@@ -137,6 +137,7 @@ void PendSVC(void)
  * Output         : None
  * Return         : None
  *******************************************************************************/
+uint8_t rf_io = 0;
 void SysTickHandler(void)
 {
     OS_CPU_SR  cpu_sr;
@@ -146,7 +147,16 @@ void SysTickHandler(void)
     OS_EXIT_CRITICAL();	  //恢复全局中断标志
     OSTimeTick();     /* Call uC/OS-II's OSTimeTick(),在os_core.c文件里定义,主要判断延时的任务是否计时到*/
     OSIntExit();  //在os_core.c文件里定义,如果有更高优先级的任务就绪了,则执行一次任务切换
-
+    if(get_rf_status() == 0) {
+        if(OSTimeGet() % 4 == 0) {
+            rf_io = !rf_io;
+            if(rf_io) {
+                SET_HIGH();
+            } else {
+                SET_LOW();
+            }
+        }
+    }
 }
 
 
@@ -605,9 +615,11 @@ void USART1_IRQHandler(void)
  * Output         : None
  * Return         : None
  *******************************************************************************/
+/*
 void USART2_IRQHandler(void)
 {
 }
+*/
 
 
 
