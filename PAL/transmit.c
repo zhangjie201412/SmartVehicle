@@ -311,7 +311,7 @@ void upload_location(uint32_t longitude, uint32_t latitude)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    //printf("%s\r\n", out);
+    printf("%s\r\n", out);
     sim900_write((uint8_t *)out, length);
 
     cJSON_Delete(root);

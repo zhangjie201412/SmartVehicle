@@ -144,7 +144,7 @@ void immo_process(void)
         OSTimeDly(2);
         SET_LOW();
         OSTimeDly(62);
-        sendAddr(get_immo_addr());
+        sendAddr(0x12);
         rf_start = 0;
     }
 }

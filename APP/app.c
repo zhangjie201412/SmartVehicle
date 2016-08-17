@@ -114,10 +114,10 @@ static  void App_TaskStart(void* p_arg)
     need_reboot = 0;
     while (1)
     {
-        OSTimeDlyHMSM(0, 0, 5, 0);
+        OSTimeDlyHMSM(0, 0, 1, 0);
         if(need_reboot == 0)
             iwdg_feed();
-        ticks += 5;
+        ticks += 1;
 #ifdef PROP_HAS_GPRS
         if(ticks >= CONNECTION_TIMEOUT) {
             go_reboot();
@@ -167,7 +167,7 @@ static void task_process_atcmd(void *parg)
 
     pal_init();
     while(1) {
-        OSTimeDlyHMSM(0, 0, 4, 0);
+        OSTimeDlyHMSM(0, 0, 5, 0);
     }
 }
 
