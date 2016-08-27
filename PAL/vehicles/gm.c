@@ -826,7 +826,15 @@ CanTxMsg gm_fault_code =
     0x000, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
     8,
-    0x03, 0xA9, 0x81, 0x01A, 0x00, 0x00, 0x00, 0x00
+    0x03, 0xA9, 0x81, 0x1A, 0x00, 0x00, 0x00, 0x00
+};
+
+CanTxMsg gm_clear_fault =
+{
+    0x000, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
 uint16_t gm_code_list[FAULT_CODE_MAX_SIZE][2] =
@@ -1095,7 +1103,14 @@ void gm_ctrl_findcar(uint8_t state)
 
 void gm_clear_fault_code(void)
 {
+    uint8_t i = 0;
     printf("-> %s\r\n", __func__);
+    
+    for(i = 0; i < FAULT_CODE_MAX_SIZE; i++) {
+        gm_clear_fault.StdId = gm_code_list[i][0];
+        flexcan_send_frame(&gm_clear_fault);
+        OSTimeDlyHMSM(0, 0, 0, 200);
+    }
 }
 
 uint32_t *gm_check_fault_code(uint8_t id, uint8_t *len)

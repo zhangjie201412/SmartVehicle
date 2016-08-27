@@ -554,6 +554,73 @@ CanTxMsg toyota_fault_code[FAULT_CODE_MAX_SIZE] =
     },
 };
 
+CanTxMsg toyota_clear_fault[FAULT_CODE_MAX_SIZE] =
+{
+    //ENG_CODE
+    {
+        0x7e0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //AT_CODE
+    {
+        0x7e0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //ABS_CODE
+    {
+        0x7b0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //SRS_CODE
+    {
+        0x780, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //BCM_CODE
+    {
+        0x750, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x40, 0x01, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //IPC_CODE
+    {
+        0x7c0, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //EPS_CODE
+    {
+        0x7a1, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //AC_CODE
+    {
+        0x7c4, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+    //TPMS_CODE
+    {
+        0x000, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x01, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    },
+};
+
 void toyota_keepalive(void)
 {
     flexcan_send_frame(&toyota_keepalive_normal);
@@ -776,7 +843,13 @@ void toyota_ctrl_findcar(uint8_t state)
 
 void toyota_clear_fault_code(void)
 {
+    uint8_t i;
+    
     printf("-> %s\r\n", __func__);
+    for(i = 0; i < FAULT_CODE_MAX_SIZE; i++) {
+        flexcan_send_frame(&toyota_clear_fault[i]);
+        OSTimeDlyHMSM(0, 0, 0, 200);
+    }
 }
 
 __IO uint32_t toyota_code_val[FAULT_CODE_MAX_SIZE];

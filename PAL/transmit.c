@@ -113,6 +113,10 @@ void recv_callback(uint8_t *buf)
                     }
                 }
                 break;
+            case MSG_TYPE_CLEAR_FAULT:
+                //clear fault code
+                getPalInstance()->ops->clear_fault_code();
+                break;
             case MSG_TYPE_VEHICLE_TYPE:
                 item = cJSON_GetObjectItem(json, KEY_VEHICLE_TYPE);
                 if(!strcmp(item->valuestring, "toyota")) {
