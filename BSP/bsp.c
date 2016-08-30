@@ -1,6 +1,7 @@
 #include "..\App\includes.h"
 #include "stm32f10x.h"
 #include "wdg.h"
+#include "config.h"
 
 #if 1
 #pragma import(__use_no_semihosting)
@@ -61,7 +62,9 @@ void BSP_Init(void)
     /* NVIC configuration */
     NVIC_Configuration();
     //    iwdg_init(IWDG_Prescaler_256, 0xfff);
+#ifdef SERVER_IS_K
     immo_init();
+#endif
 }
 
 void immo_init(void)

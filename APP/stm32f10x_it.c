@@ -147,6 +147,7 @@ void SysTickHandler(void)
     OS_EXIT_CRITICAL();	  //恢复全局中断标志
     OSTimeTick();     /* Call uC/OS-II's OSTimeTick(),在os_core.c文件里定义,主要判断延时的任务是否计时到*/
     OSIntExit();  //在os_core.c文件里定义,如果有更高优先级的任务就绪了,则执行一次任务切换
+#ifdef SERVER_IS_K
     if(get_rf_status() == 0) {
         if(OSTimeGet() % 4 == 0) {
             rf_io = !rf_io;
@@ -157,6 +158,7 @@ void SysTickHandler(void)
             }
         }
     }
+#endif
 }
 
 

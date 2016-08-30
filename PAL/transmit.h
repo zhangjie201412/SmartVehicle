@@ -3,30 +3,65 @@
 #include "stm32f10x.h"
 #include "pal.h"
 
-#define KEY_DEVICE_ID       "deviceid"
-#define KEY_MSG_TYPE        "msg_type"
-#define KEY_HEARTBEAT       "heartbeat_count"
-#define KEY_CMD_ID          "cmd_id"
-#define KEY_VEHICLE_TYPE    "model"
-#define KEY_STATUS          "status"
-#define KEY_CMD_TYPE        "cmd_type"
-#define KEY_LNG             "lng"
-#define KEY_LAT             "lat"
+#ifdef SERVER_IS_K
+    #define KEY_DEVICE_ID       "deviceid"
+    #define KEY_MSG_TYPE        "msg_type"
+    #define KEY_HEARTBEAT       "heartbeat_count"
+    #define KEY_CMD_ID          "cmd_id"
+    #define KEY_VEHICLE_TYPE    "model"
+    #define KEY_STATUS          "status"
+    #define KEY_CMD_TYPE        "cmd_type"
+    #define KEY_LNG             "lng"
+    #define KEY_LAT             "lat"
+#elif defined SERVER_IS_VEHICLE_UNION
+    #define KEY_DEVICE_ID       "deviceid"
+    #define KEY_MSG_TYPE        "msg_type"
+    #define KEY_HEARTBEAT       "heartbeat_count"
+    #define KEY_CMD_ID          "cmd_id"
+    #define KEY_VEHICLE_TYPE    "model"
+    #define KEY_STATUS          "status"
+    #define KEY_CMD_TYPE        "cmd_type"
+    #define KEY_LNG             "lng"
+    #define KEY_LAT             "lat"
+#endif
 
 #define LOGIN_DELAYED_TIME          6
 
-#define MSG_TYPE_HEARTBEAT          0
-#define MSG_TYPE_HEARTBEAT_RSP      1
-#define MSG_TYPE_CTRL               2
-#define MSG_TYPE_CTRL_RSP           3
-#define MSG_TYPE_UPLOAD             4
-#define MSG_TYPE_FAULT_CODE         5
-#define MSG_TYPE_CLEAR_FAULT        6
-#define MSG_TYPE_LOCATION           7
-#define MSG_TYPE_LOGIN              8
-#define MSG_TYPE_LOGIN_RSP          9
-#define MSG_TYPE_VEHICLE_TYPE       10
-#define MSG_TYPE_RETRY              11
+#ifdef SERVER_IS_K
+    #define MSG_TYPE_HEARTBEAT          0
+    #define MSG_TYPE_HEARTBEAT_RSP      1
+    #define MSG_TYPE_CTRL               2
+    #define MSG_TYPE_CTRL_RSP           3
+    #define MSG_TYPE_UPLOAD             4
+    #define MSG_TYPE_FAULT_CODE         5
+    #define MSG_TYPE_CLEAR_FAULT        6
+    #define MSG_TYPE_LOCATION           7
+    #define MSG_TYPE_LOGIN              8
+    #define MSG_TYPE_LOGIN_RSP          9
+    #define MSG_TYPE_VEHICLE_TYPE       10
+    #define MSG_TYPE_RETRY              11
+#elif defined SERVER_IS_VEHICLE_UNION
+    #define MSG_TYPE_HEARTBEAT          2
+    #define MSG_TYPE_HEARTBEAT_RSP      2
+    #define MSG_TYPE_CTRL               3
+    #define MSG_TYPE_CTRL_RSP           4
+    #define MSG_TYPE_UPLOAD             0
+    #define MSG_TYPE_FAULT_CODE         5
+    #define MSG_TYPE_CLEAR_FAULT        6
+    /*           UNUSED BELOW          */
+    /*                 |               */
+    /*                 |               */
+    /*                 v               */
+    #define MSG_TYPE_LOCATION           7
+    #define MSG_TYPE_LOGIN              8
+    #define MSG_TYPE_LOGIN_RSP          9
+    #define MSG_TYPE_VEHICLE_TYPE       10
+    #define MSG_TYPE_RETRY              11
+    /*                 ^               */
+    /*                 |               */
+    /*                 |               */
+    /*                                 */
+#endif
 
 typedef struct {
     uint8_t id;

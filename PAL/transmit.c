@@ -97,18 +97,31 @@ void recv_callback(uint8_t *buf)
                 break;
 
             case MSG_TYPE_CTRL:
+#ifdef SERVER_IS_K
                 item = cJSON_GetObjectItem(json, KEY_CMD_ID);
                 cmd_id = item->valueint;
+#endif
                 for(i = 0; i < CONTROL_END; i++) {
                     tmp = strstr((char *)buf, ctrlTable[i].key) ;
                     if(tmp) {
                         item = cJSON_GetObjectItem(json, ctrlTable[i].key);
+#ifdef SERVER_IS_K
                         ctrl_val = item->valueint;
                         printf("cmd: %s, val = %d\r\n", ctrlTable[i].key,
                                 ctrl_val);
                         ctrlMsg.id = i;
                         ctrlMsg.cmd_id = cmd_id;
                         ctrlMsg.value = ctrl_val;
+#elif defined SERVER_IS_VEHICLE_UNION
+                        ctrlMsg.id = i;
+                        //ignore cmd id in Vehicle Union server
+                        ctrlMsg.cmd_id = 0;
+                        if(!strcmp(item->valuestring, "ON")) {
+                            ctrlMsg.value = 1;
+                        } else if(!strcmp(item->valuestring, "OFF")) {
+                            ctrlMsg.value = 0;
+                        }
+#endif
                         OSMboxPost(getPalInstance()->mailbox, &ctrlMsg);
                     }
                 }
@@ -140,14 +153,18 @@ static void heartbeat_thread(void *parg)
     uint32_t lng, lat;
     parg = parg;
     //send login message firstly
+#ifdef SERVER_IS_K
     printf("login!\r\n");
     login();
+#endif
     OSTimeDlyHMSM(0, 0, LOGIN_DELAYED_TIME, 0);
     for(;;) {
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL, 0);
         //send heartbeat
         heartbeat = (heartbeat == 100) ? 0 : heartbeat;
         send_heartbeat(heartbeat ++);
+// the vehicle union server will not receive the gps information
+#ifdef SERVER_IS_K
         if(heartbeat % 2 == 0) {
             lng = getLongitude();
             lat = getLatitude();
@@ -155,6 +172,7 @@ static void heartbeat_thread(void *parg)
                 upload_location(lng, lat);
             }
         }
+#endif
     }
 }
 
@@ -224,7 +242,9 @@ void control_rsp(uint32_t cmd_id, uint8_t cmd_type)
     getDeviceId();
     cJSON_AddStringToObject(root, KEY_DEVICE_ID, (const char *)deviceid);
     cJSON_AddNumberToObject(root, KEY_MSG_TYPE, MSG_TYPE_CTRL_RSP);
+#ifdef SERVER_IS_K
     cJSON_AddNumberToObject(root, KEY_CMD_ID, cmd_id);
+#endif
     cJSON_AddNumberToObject(root, KEY_STATUS, 0);
     cJSON_AddStringToObject(root, KEY_CMD_TYPE, ctrlTable[cmd_type].key);
 

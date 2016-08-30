@@ -13,6 +13,7 @@
 #include "flexcan.h"
 #include "wdg.h"
 #include "pal.h"
+#include "config.h"
 
 OS_EVENT* atCmdMailbox;
 int isRunning = 0;
@@ -55,6 +56,11 @@ int main(void)
     OSInit();                                                   /* Initialize "uC/OS-II, The Real-Time Kernel".         */
     BSP_Init();                                                 /* Initialize BSP functions.  */
     printk("Vehicle Union device Start!\r\n");
+#ifdef SERVER_IS_K
+    printk("SERVER IS K\r\n");
+#elif defined SERVER_IS_VEHICLE_UNION
+    printk("SERVER IS VEHICLE UNION\r\n");
+#endif
     os_err = OSTaskCreate((void (*) (void *)) App_TaskStart,	  		  		//指向任务代码的指针
             (void *) 0,								  		//任务开始执行时，传递给任务的参数的指针
             (OS_STK *) &App_TaskStartStk[APP_TASK_START_STK_SIZE - 1],	//分配给任务的堆栈的栈顶指针   从顶向下递减
@@ -123,7 +129,9 @@ static  void App_TaskStart(void* p_arg)
             go_reboot();
         }
 #endif
+#ifdef SERVER_IS_K
         immo_process();
+#endif
     }
 }
 
