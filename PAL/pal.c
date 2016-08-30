@@ -12,9 +12,9 @@
 
 #define UPLOAD_THREAD_INTERVAL          60
 #define ENG_INTERVAL                    120
-#define AT_INTERVAL                     300
-#define ABS_INTERVAL                    400
-#define BCM_INTERVAL                    120
+#define AT_INTERVAL                     360
+#define ABS_INTERVAL                    360
+#define BCM_INTERVAL                    60
 
 #define DEVICE_ID_ADDRESS               0x80
 #define TRANSMIT_TASK_STK_SIZE          128
@@ -127,6 +127,9 @@ void pal_init(void)
     for(i = 0;i < PID_SIZE; i++) {
         updateList[i].updated = FALSE;
     }
+
+    //printk("test for fault code\r\n");
+    //pal_get_fault_code();
 }
 
 static void transmit_thread(void *pargs)
@@ -191,8 +194,11 @@ void pal_get_fault_code(void)
         value.fault_code = i;
         memset(value.code, 0x00, FAULT_CODE_MAX_SIZE);
         code = mPal.uploadOps->check_fault_code(i, &len);
-        if(code == NULL)
+        printf("end of check fault code\r\n");
+        if(code == NULL) {
+            printf("Error: code is null\r\n");
             continue;
+        }
 
         for(j = 0; j < len; j++) {
             value.code[j] = code[j];

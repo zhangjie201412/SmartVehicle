@@ -46,6 +46,13 @@ void transmit_init(void)
             HEARTBEAT_THREAD_PRIO);
     heartbeat = 0;
     connected = FALSE;
+#ifdef VEHICLE_TYPE_FAKE
+    fake_setup();
+#elif defined VEHICLE_TYPE_TOYOTA
+    toyota_setup();
+#elif defined VEHICLE_TYPE_GM
+    gm_setup();
+#endif
 #endif
 }
 
@@ -77,10 +84,12 @@ void recv_callback(uint8_t *buf)
         msg_type = item->valueint;
         //printf("msg type = %d\r\n", msg_type);
         switch(msg_type) {
+#ifdef SERVER_IS_K
             case MSG_TYPE_HEARTBEAT:
                 printf("---device offline---\r\n");
                 go_reboot();
                 break;
+#endif
             case MSG_TYPE_HEARTBEAT_RSP:
                 item = cJSON_GetObjectItem(json, KEY_HEARTBEAT);
                 heartbeat_rsp = item->valueint;
@@ -93,6 +102,7 @@ void recv_callback(uint8_t *buf)
                     setTicks(0);
                 } else {
                     printf("failed to parse heartbeat\r\n");
+                    go_reboot();
                 }
                 break;
 

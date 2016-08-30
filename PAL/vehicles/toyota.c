@@ -30,7 +30,7 @@ CanTxMsg toyota_door_on =
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
     8,
-    0x40, 0x05, 0x30, 0x11, 0x00, 0x80, 0x00, 0x00
+    0x40, 0x05, 0x30, 0x11, 0x00, 0x40, 0x00, 0x00
 };
 
 CanTxMsg toyota_door_off =
@@ -38,7 +38,7 @@ CanTxMsg toyota_door_off =
     0x750, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
     8,
-    0x40, 0x05, 0x30, 0x11, 0x00, 0x40, 0x00, 0x00
+    0x40, 0x05, 0x30, 0x11, 0x00, 0x80, 0x00, 0x00
 };
 
 CanTxMsg toyota_trunk_on =
@@ -129,6 +129,22 @@ CanTxMsg toyota_window_off[4] =
     },
 };
 
+CanTxMsg toyota_findcar[2] =
+{
+    {
+        0x750, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x40, 0x04, 0x30, 0x06, 0xff, 0x00, 0x20, 0x00
+    },
+    {
+        0x750, 0x18db33f1,
+        CAN_ID_STD, CAN_RTR_DATA,
+        8,
+        0x40, 0x04, 0x30, 0x06, 0x00, 0x00, 0x20, 0x00
+    },
+};
+
 CanTxMsg toyota_keepalive_normal =
 {
     0x750, 0x18db33f1,
@@ -184,7 +200,7 @@ PidSupportItem toyotaSupportItems[PID_SIZE] =
     {ENG_DATA_MAF, SUPPORTED},
     {ENG_DATA_OILLIFE, UNSUPPORTED},
     {ENG_DATA_OILTEMP, SUPPORTED},
-    {ENG_DATA_FUEL, UNSUPPORTED},
+    {ENG_DATA_FUEL, SUPPORTED},
     {ENG_DATA_FUELLEVEL, SUPPORTED},
     {ENG_DATA_FUELTANK, UNSUPPORTED},
     {AT_DATA_OILTEMP, SUPPORTED},
@@ -200,7 +216,7 @@ PidSupportItem toyotaSupportItems[PID_SIZE] =
     {BCM_DATA_SUNROOF, UNSUPPORTED},
     {BCM_DATA_PARKLAMP, UNSUPPORTED},
     {BCM_DATA_HEADLAMP, UNSUPPORTED},
-    {BCM_DATA_HIGHBEAM, UNSUPPORTED},
+    {BCM_DATA_HIGHBEAM, SUPPORTED},
     {BCM_DATA_HAZARD, SUPPORTED},
     {BCM_DATA_FRONTFOG, SUPPORTED},
     {BCM_DATA_REARFOG, SUPPORTED},
@@ -376,7 +392,9 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     },
     //FUEL
     {
-        ENG_DATA_FUEL, 0X7df, 8,
+        ENG_DATA_FUEL, 0X7c0, 8,
+        {0x02, 0x21, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x00},
+        0x7c8, 2, 1,
     },
     //ENG_DATA_FUELLEVEL
     {
@@ -455,6 +473,8 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     //BCM_DATA_HIGHBEAM
     {
         BCM_DATA_HIGHBEAM, 0X750, 8,
+        {0x70, 0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00},
+        0x758, 0x03, 1,
     },
     //BCM_DATA_HAZARD
     {
@@ -529,7 +549,7 @@ CanTxMsg toyota_fault_code[FAULT_CODE_MAX_SIZE] =
         0x750, 0x18db33f1,
         CAN_ID_STD, CAN_RTR_DATA,
         8,
-        0x04, 0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00
+        0x40, 0x02, 0x13, 0x81, 0x00, 0x00, 0x00, 0x00
     },
     //ipc_code
     {
@@ -838,7 +858,22 @@ void toyota_ctrl_trunk(uint8_t state)
 
 void toyota_ctrl_findcar(uint8_t state)
 {
-    printf("-> %s\r\n", __func__);
+    uint8_t i = 0;
+    if(state) {
+        for(i = 0; i < 2; i++) {
+            flexcan_send_frame(&toyota_findcar[i]);
+            OSTimeDlyHMSM(0, 0, 0, 3000);
+        }
+    } else {
+        for(i = 0; i < 2; i++) {
+            flexcan_send_frame(&toyota_findcar[i]);
+            OSTimeDlyHMSM(0, 0, 0, 3000);
+        }
+    }
+    for(i = 0; i < 2; i++) {
+        toyota_keepalive();
+        OSTimeDlyHMSM(0, 0, 2, 0);
+    }
 }
 
 void toyota_clear_fault_code(void)
@@ -867,14 +902,20 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
     uint8_t l_packages = 0;
     uint8_t sub_cmd = 0;
     uint16_t rxId;
+		uint8_t hasSubCmd = FALSE;
+		uint8_t shift = 3;
 
     CanRxMsg *rxMsg;
 
     memset(toyota_fault_data, 0x00, 100);
     memset(toyota_code_val, 0x00, FAULT_CODE_MAX_SIZE);
 
-    rxId = toyota_fault_code[i].StdId + 8;
-
+    rxId = toyota_fault_code[id].StdId + 8;
+		if(toyota_fault_code[id].Data[0] > 0x10) {
+			hasSubCmd = TRUE;
+		}
+    //printf("%s: txId = 0x%04x, rxId = 0x%04x\r\n", __func__,
+    //        toyota_fault_code[id].StdId, rxId);
     ret = flexcan_ioctl(DIR_BI, &toyota_fault_code[id], rxId, 1);
     if(ret > 0) {
         rxMsg = flexcan_dump();
@@ -908,9 +949,14 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
         }
         //short package
         else {
+						if(hasSubCmd) {
+							shift = 3;
+						} else {
+							shift = 2;
+						}
             //shift the valid data to head
-            for(i = 2; i < 8; i++) {
-                toyota_fault_data[i - 2] = rxMsg->Data[i];
+            for(i = shift; i < 8; i++) {
+                toyota_fault_data[i - shift] = rxMsg->Data[i];
             }
         }
         //parse fault code

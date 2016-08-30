@@ -60,6 +60,8 @@ int main(void)
     printk("SERVER IS K\r\n");
 #elif defined SERVER_IS_VEHICLE_UNION
     printk("SERVER IS VEHICLE UNION\r\n");
+#else
+    printk("UNKNOW!!!!\r\n");
 #endif
     os_err = OSTaskCreate((void (*) (void *)) App_TaskStart,	  		  		//指向任务代码的指针
             (void *) 0,								  		//任务开始执行时，传递给任务的参数的指针

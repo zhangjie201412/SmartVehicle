@@ -12,10 +12,9 @@
 #ifdef SERVER_IS_K
 uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"139.224.17.163\",\"8880\"\r\n";
 #elif defined SERVER_IS_VEHICLE_UNION
-uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"117.81.228.156\",\"8880\"\r\n";
+uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"139.196.153.24\",\"9999\"\r\n";
 #endif
 
-//uint8_t connect_cmd[64] = "AT+CIPSTART=\"TCP\",\"117.81.228.156\",\"9999\"\r\n";
 static uint8_t rx_buf[100];
 static struct rb rx_rb;
 OS_EVENT *rx_semaphore;

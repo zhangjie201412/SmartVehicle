@@ -2,6 +2,7 @@
 #define __TRANSMIT_H__
 #include "stm32f10x.h"
 #include "pal.h"
+#include "config.h"
 
 #ifdef SERVER_IS_K
     #define KEY_DEVICE_ID       "deviceid"
