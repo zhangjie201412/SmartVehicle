@@ -59,7 +59,7 @@ PidItem pidList[PID_SIZE] =
     {ENG_DATA_FUELTANK, "eng_data_fueltank", ENG_INTERVAL},
     {AT_DATA_OILTEMP, "at_data_oiltemp", AT_INTERVAL},
     {ABS_DATA_OILLEVEL, "abs_data_oillevel", ABS_INTERVAL},
-    {BCM_DATA_CHARGESTATUS, "bcm_data_chargstatus", BCM_INTERVAL},
+    {BCM_DATA_CHARGESTATUS, "bcm_data_chargestatus", BCM_INTERVAL},
     {BCM_DATA_BATTCURRENT, "bcm_data_battcurrent", BCM_INTERVAL},
     {BCM_DATA_BATTSTATUS, "bcm_data_battstatus", BCM_INTERVAL},
     {BCM_DATA_BATTVOLT, "bcm_data_battvolt", BCM_INTERVAL},
@@ -77,6 +77,10 @@ PidItem pidList[PID_SIZE] =
     {BCM_DATA_LEFTTURN, "bcm_data_leftturn", BCM_INTERVAL},
     {BCM_DATA_RIGHTTURN, "bcm_data_rightturn", BCM_INTERVAL},
     {BCM_DATA_ODO, "bcm_data_odo", BCM_INTERVAL},
+    {TPMS_DATA_LFTIREP, "tpms_lftirep", BCM_INTERVAL},
+    {TPMS_DATA_RFTIREP, "tpms_rftirep", BCM_INTERVAL},
+    {TPMS_DATA_LRTIREP, "tpms_lrtirep", BCM_INTERVAL},
+    {TPMS_DATA_RRTIREP, "tpms_rrtirep", BCM_INTERVAL},
 };
 
 UpdateItem updateList[PID_SIZE];

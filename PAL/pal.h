@@ -80,6 +80,10 @@ typedef enum {
     BCM_DATA_LEFTTURN,
     BCM_DATA_RIGHTTURN,
     BCM_DATA_ODO,
+    TPMS_DATA_LFTIREP,
+    TPMS_DATA_RFTIREP,
+    TPMS_DATA_LRTIREP,
+    TPMS_DATA_RRTIREP,
     //the last one
     PID_SIZE,
 } EnumPidType;

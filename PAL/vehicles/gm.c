@@ -916,6 +916,11 @@ uint8_t gm_engine_on(void)
     return on;
 }
 
+uint8_t fake1[1] = {24};
+uint8_t fake2[1] = {25};
+uint8_t fake3[1] = {25};
+uint8_t fake4[1] = {27};
+
 uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
 {
     uint8_t i, j;
@@ -927,6 +932,24 @@ uint8_t* gm_data_stream(uint8_t pid, uint8_t *len)
 
     CanTxMsg txMsg;
     CanRxMsg *rxMsg;
+
+    //add tpms fake data
+    if(pid == TPMS_DATA_LFTIREP) {
+        *len = 1;
+        return fake1;
+    }
+    if(pid == TPMS_DATA_RFTIREP) {
+        *len = 1;
+        return fake2;
+    }
+    if(pid == TPMS_DATA_LRTIREP) {
+        *len = 1;
+        return fake3;
+    }
+    if(pid == TPMS_DATA_RRTIREP) {
+        *len = 1;
+        return fake4;
+    }
 
     //check if this pid supported
     if(gmSupportItems[pid].support != SUPPORTED) {
