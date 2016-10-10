@@ -156,25 +156,39 @@ void pal_do_bcm(uint8_t id, uint8_t val, uint32_t cmd_id)
     //printf("%s: ++id = %d, val = %d++\r\n", __func__, id, val);
     switch(id) {
         case CONTROL_IMMOLOCK:
+            //lock_can();
             set_immo_lock(val);
+            //unlock_can();
             break;
         case CONTROL_WINDOW:
+            lock_can();
             mPal.ops->control_window(val);
+            unlock_can();
             break;
         case CONTROL_DOOR:
+            lock_can();
             mPal.ops->control_door(val);
+            unlock_can();
             break;
         case CONTROL_LIGHT:
+            lock_can();
             mPal.ops->control_light(val);
+            unlock_can();
             break;
         case CONTROL_SUNROOF:
+            lock_can();
             mPal.ops->control_sunfloor(val);
+            unlock_can();
             break;
         case CONTROL_TRUNK:
+            lock_can();
             mPal.ops->control_trunk(val);
+            unlock_can();
             break;
         case CONTROL_FINDCAR:
+            lock_can();
             mPal.ops->control_findcar(val);
+            unlock_can();
             break;
         default:
             printf("invalid cmd id\r\n");
@@ -293,6 +307,7 @@ void upload_thread(void *unused)
 #ifdef CHECK_ENGINE
         //check is engine on
         if(mPal.uploadOps->is_engine_on) {
+            lock_can();
             engine_on = mPal.uploadOps->is_engine_on();
             if(engine_on == TRUE && (last_engine_on == FALSE)) {
                 printf("---> ENGINE IS ON!! <---\r\n");
@@ -302,6 +317,7 @@ void upload_thread(void *unused)
                 printf("---> ENGINE IS OFF!! <---\r\n");
             }
             last_engine_on = engine_on;
+            unlock_can();
         }
 #endif
         for(i = 0; i < PID_SIZE; i++) {
@@ -320,7 +336,9 @@ void upload_thread(void *unused)
             }
 
             len = 0;
+            lock_can();
             data = mPal.uploadOps->transfer_data_stream(i, &len);
+            unlock_can();
             if(data == NULL) {
                 if(len != UNSUPPORTED_LEN) {
                     //if current eng data failed, skip eng datas
@@ -342,6 +360,12 @@ void upload_thread(void *unused)
         upload_server();
     }
 }
+
+void lock_can(void)
+{}
+
+void unlock_can(void)
+{}
 
 const char *getPidKey(uint8_t pid)
 {

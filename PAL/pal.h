@@ -170,7 +170,8 @@ typedef struct {
     DevCtrlOps *ops;
     DevUploadOps *uploadOps;
     PidSupportItem pidSupportList[PID_SIZE];
-
+    //protect can transfer flow
+    OS_EVENT *mutex;
     OS_EVENT *mailbox;
 } Pal;
 
@@ -185,5 +186,7 @@ const char *getPidKey(uint8_t pid);
 const char *getFaultCodeKey(uint8_t code);
 void getDeviceId(void);
 Pal *getPalInstance(void);
+void lock_can(void);
+void unlock_can(void);
 
 #endif
