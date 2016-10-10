@@ -78,3 +78,11 @@ bool rb_get(struct rb* rb, uint8_t *ptr, uint16_t length)
     }
     return TRUE;
 }
+
+void rb_clear(struct rb* rb)
+{
+    uint8_t byte;
+    while(!rb_is_empty) {
+        rb_get(rb, &byte, 1);
+    }
+}

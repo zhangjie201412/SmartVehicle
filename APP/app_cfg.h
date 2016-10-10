@@ -65,7 +65,7 @@
 
 #define  APP_TASK_START_STK_SIZE		128
 //process at command
-#define task_process_atcmd_stk_size		128
+#define task_process_atcmd_stk_size		256
 //work process
 #define task_report_work_stk_size       128
 

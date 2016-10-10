@@ -6,9 +6,9 @@
  * */
 
 #define SERVER_IS_VEHICLE_UNION
-#define VEHICLE_TYPE_TOYOTA
+//#define VEHICLE_TYPE_TOYOTA
 //#define VEHICLE_TYPE_GM
-//#define VEHICLE_TYPE_FAKE
+#define VEHICLE_TYPE_FAKE
 //#define SERVER_IS_K
 
 #define PROP_HAS_GPS            1

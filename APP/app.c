@@ -7,7 +7,7 @@
 #include "app.h"
 
 #include "m25p16.h"
-#include "sim900.h"
+#include "sim800.h"
 #include "gps.h"
 #include "cJSON.h"
 #include "flexcan.h"
@@ -175,7 +175,8 @@ static void task_process_atcmd(void *parg)
     flexcan_init(CAN_500K);
     flexcan_filter(0x641, 0x641, 0x6ff, 0x6ff);
 
-    pal_init();
+    sim800_setup();
+//    pal_init();
     while(1) {
         OSTimeDlyHMSM(0, 0, 5, 0);
     }

@@ -11,7 +11,7 @@
 #define SIM900_USART	                        USART3
 #define SIM900_PinRemap                         DISABLE
 #define SIM900_USARTAPB                         APB1
-#define SIM900_USART_IRQHandler                 USART3_IRQHandler
+//#define SIM900_USART_IRQHandler                 USART3_IRQHandler
 
 #define SIM900_AT_RESP_MQ_POOL_SIZE             1024
 #define SIM900_AT_REST_MQ_MSG_SIZE              32

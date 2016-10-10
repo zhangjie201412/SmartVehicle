@@ -7,6 +7,14 @@
 DevCtrlOps gm_ops;
 DevUploadOps gm_upload_ops;
 
+CanTxMsg gm_exit_cmd =
+{
+    0x241, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    2,
+    0x01, 0x02
+};
+
 CanTxMsg gm_lamp_on =
 {
     0x241, 0x18db33f1,
@@ -1022,6 +1030,8 @@ void gm_ctrl_window(uint8_t state)
     uint8_t i = 0;
 
     printf("-> %s\r\n", __func__);
+    flexcan_send_frame(&gm_exit_cmd);
+    OSTimeDlyHMSM(0, 0, 0, 500);
     if(state) {
         for(i = 0; i < 2; i++) {
             flexcan_send_frame(&gm_window_on[i]);
@@ -1039,6 +1049,8 @@ void gm_ctrl_door(uint8_t state)
 {
     uint8_t i = 0;
     printf("-> %s\r\n", __func__);
+    flexcan_send_frame(&gm_exit_cmd);
+    OSTimeDlyHMSM(0, 0, 0, 500);
     flexcan_send_frame(&gm_keepalive);
     OSTimeDlyHMSM(0, 0, 1, 0);
     if(state) {
@@ -1056,6 +1068,8 @@ void gm_ctrl_door(uint8_t state)
 void gm_ctrl_light(uint8_t state)
 {
     printf("-> %s\r\n", __func__);
+    flexcan_send_frame(&gm_exit_cmd);
+    OSTimeDlyHMSM(0, 0, 0, 500);
     flexcan_send_frame(&gm_keepalive);
     OSTimeDlyHMSM(0, 0, 1, 0);
     if(state) {
@@ -1071,6 +1085,8 @@ void gm_ctrl_sunfloor(uint8_t state)
 {
     uint8_t i = 0;
     printf("-> %s\r\n", __func__);
+    flexcan_send_frame(&gm_exit_cmd);
+    OSTimeDlyHMSM(0, 0, 0, 500);
     if(state) {
         for(i = 0; i < 3; i ++) {
             flexcan_send_frame(&gm_sunfloor_on[i]);
@@ -1088,6 +1104,8 @@ void gm_ctrl_trunk(uint8_t state)
 {
     uint8_t i = 0;
     printf("-> %s\r\n", __func__);
+    flexcan_send_frame(&gm_exit_cmd);
+    OSTimeDlyHMSM(0, 0, 0, 500);
     flexcan_send_frame(&gm_keepalive);
     OSTimeDlyHMSM(0, 0, 1, 0);
     if(state) {
@@ -1108,6 +1126,8 @@ void gm_ctrl_findcar(uint8_t state)
 {
     uint8_t i = 0;
     printf("-> %s\r\n", __func__);
+    flexcan_send_frame(&gm_exit_cmd);
+    OSTimeDlyHMSM(0, 0, 0, 500);
     flexcan_send_frame(&gm_keepalive);
     OSTimeDlyHMSM(0, 0, 1, 0);
     if(state) {
