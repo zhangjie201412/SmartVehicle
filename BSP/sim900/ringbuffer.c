@@ -18,6 +18,17 @@ bool rb_is_empty(struct rb* rb)
         return FALSE;
 }
 
+uint16_t rb_get_size(struct rb *rb)
+{
+    uint16_t size;
+    if(rb->read_index > rb->write_index) {
+        size = rb->read_index - rb->write_index;
+    } else {
+        size = rb->buffer_size - rb->write_index + rb->read_index;
+    }
+    return size;
+}
+
 bool rb_put(struct rb* rb, const uint8_t *ptr, uint16_t length)
 {
     uint16_t size;
@@ -85,4 +96,6 @@ void rb_clear(struct rb* rb)
     while(!rb_is_empty) {
         rb_get(rb, &byte, 1);
     }
+//    rb->read_index = 0;
+//    rb->write_index = 0;
 }

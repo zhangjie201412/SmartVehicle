@@ -12,11 +12,20 @@
 #define SIM800_USARTAPB                         APB1
 #define SIM800_USART_IRQHandler                 USART3_IRQHandler
 
+typedef struct __SIM800_CMD {
+    char *cmd;
+    uint16_t delay;
+} sim800_cmd;
+
 enum StatusType {
     STATE_UNINITED,
     STATE_INITED,
+    STATE_CONNECTING,
+    STATE_CONNECTED,
     STATE_IDLE,
-    STATE_BUSY,
+    STATE_SENDING,
+    STATE_CMD_BUSY,
+    STATE_DATA_BUSY,
 };
 
 //public:
@@ -34,5 +43,6 @@ void sim800_lock(void);
 void sim800_unlock(void);
 bool sim800_down(uint16_t sec);
 void sim800_up(void);
+void sim800_register_recv(RecvFunc func);
 
 #endif
