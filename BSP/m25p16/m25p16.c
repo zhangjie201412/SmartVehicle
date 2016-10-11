@@ -126,8 +126,6 @@ void flash_page_write(uint8_t *data, uint32_t addr, int length)
 {
     uint32_t i;
 
-    flash_page_erase(0x01);
-
     flash_wait_busy();
     SELECT();
     spi_send_byte(0x06);

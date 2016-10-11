@@ -111,6 +111,8 @@ static void upload_thread(void *unused);
 __IO uint8_t deviceid[17];
 
 __IO static Pal mPal;
+#define QUEUE_SIZE      10
+void *mQueue[QUEUE_SIZE];
 
 void pal_init(void)
 {
@@ -118,7 +120,7 @@ void pal_init(void)
     uint8_t i;
 
     //create mailbox
-    mPal.mailbox = OSMboxCreate((void *)0);
+    mPal.queue = OSQCreate(mQueue, QUEUE_SIZE);
     mPal.mutex = OSMutexCreate(12, &err);
 
     transmit_init();
@@ -146,7 +148,7 @@ static void transmit_thread(void *pargs)
     pargs = pargs;
 
     while(1) {
-        ctrlMsg = (CtrlMsg *)OSMboxPend(mPal.mailbox, 0, &err);
+        ctrlMsg = (CtrlMsg *)OSQPend(mPal.queue, 0, &err);
         printf("id = %d, cmd_id = %d, value = %d\r\n",
                 ctrlMsg->id, ctrlMsg->cmd_id, ctrlMsg->value);
         pal_do_bcm(ctrlMsg->id, ctrlMsg->value, ctrlMsg->cmd_id);

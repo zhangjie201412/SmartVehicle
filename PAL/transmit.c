@@ -28,10 +28,11 @@ static uint8_t connected = FALSE;
 
 void transmit_init(void)
 {
+#if 0       //disable
 #ifdef PROP_HAS_GPS
     gps_init();
     gps_setup();
-//    gps_test();
+#endif
 #endif
 #ifdef PROP_HAS_GPRS
     //init for gprs
@@ -64,7 +65,7 @@ uint8_t isConnected(void)
 void recv_callback(uint8_t *buf)
 {
     //1. parse buffer
-    //2. send mailbox cmd to pal layer
+    //2. send queue cmd to pal layer
     //    printf("-> %s: %s\r\n", __func__, buf);
     cJSON *json, *item;
     char *tmp;
@@ -132,7 +133,7 @@ void recv_callback(uint8_t *buf)
                             ctrlMsg.value = 0;
                         }
 #endif
-                        OSMboxPost(getPalInstance()->mailbox, &ctrlMsg);
+                        OSQPost(getPalInstance()->queue, &ctrlMsg);
                     }
                 }
                 break;
@@ -173,6 +174,7 @@ static void heartbeat_thread(void *parg)
         //send heartbeat
         heartbeat = (heartbeat == 100) ? 0 : heartbeat;
         send_heartbeat(heartbeat ++);
+#if 0       //disable location
 // the vehicle union server will not receive the gps information
 #ifdef SERVER_IS_K
         if(heartbeat % 2 == 0) {
@@ -182,6 +184,7 @@ static void heartbeat_thread(void *parg)
                 upload_location(lng, lat);
             }
         }
+#endif
 #endif
     }
 }

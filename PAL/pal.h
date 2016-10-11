@@ -172,7 +172,7 @@ typedef struct {
     PidSupportItem pidSupportList[PID_SIZE];
     //protect can transfer flow
     OS_EVENT *mutex;
-    OS_EVENT *mailbox;
+    OS_EVENT *queue;
 } Pal;
 
 void pal_init(void);
