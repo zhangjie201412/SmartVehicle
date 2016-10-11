@@ -114,10 +114,12 @@ __IO static Pal mPal;
 
 void pal_init(void)
 {
+    INT8U err;
     uint8_t i;
 
     //create mailbox
     mPal.mailbox = OSMboxCreate((void *)0);
+    mPal.mutex = OSMutexCreate(12, &err);
 
     transmit_init();
     iwdg_init(IWDG_Prescaler_256, 0xfff);
@@ -362,10 +364,15 @@ void upload_thread(void *unused)
 }
 
 void lock_can(void)
-{}
+{
+    INT8U err;
+    OSMutexPend(mPal.mutex, 0, &err);
+}
 
 void unlock_can(void)
-{}
+{
+    OSMutexPost(mPal.mutex);
+}
 
 const char *getPidKey(uint8_t pid)
 {
