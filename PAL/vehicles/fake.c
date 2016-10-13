@@ -287,6 +287,8 @@ uint8_t* fake_data_stream(uint8_t pid, uint8_t *len)
         return NULL;
     }
 
+    OSTimeDlyHMSM(0, 0, 1, 0);
+
     valid_len = fakeStdDs[pid].valid_len;
     offset = fakeStdDs[pid].offset;
     txMsg.StdId = fakeStdDs[pid].txId;
@@ -349,6 +351,7 @@ void fake_ctrl_trunk(uint8_t state)
 void fake_ctrl_findcar(uint8_t state)
 {
     printf("-> %s\r\n", __func__);
+    OSTimeDlyHMSM(0, 0, 5, 0);
 }
 
 void fake_clear_fault_code(void)

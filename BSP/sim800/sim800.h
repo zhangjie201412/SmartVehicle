@@ -1,6 +1,7 @@
 #ifndef __SIM800_H__
 #define __SIM800_H__
 #include "includes.h"
+#include "sim900.h"
 
 #define RCC_APBxPeriph_SIM800_USART_IO          RCC_APB2Periph_GPIOB
 #define RCC_APBxPeriph_SIM800_USART             RCC_APB1Periph_USART3
@@ -16,6 +17,8 @@ typedef struct __SIM800_CMD {
     char *cmd;
     uint16_t delay;
 } sim800_cmd;
+
+typedef void(*RecvFunc)(uint8_t *buf);
 
 enum StatusType {
     STATE_UNINITED,

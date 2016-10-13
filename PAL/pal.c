@@ -10,17 +10,17 @@
 
 #define CHECK_ENGINE                    1
 
-#define UPLOAD_THREAD_INTERVAL          60
-#define ENG_INTERVAL                    120
+#define UPLOAD_THREAD_INTERVAL          100
+#define ENG_INTERVAL                    200
 #define AT_INTERVAL                     360
 #define ABS_INTERVAL                    360
-#define BCM_INTERVAL                    60
+#define BCM_INTERVAL                    100
 
 #define DEVICE_ID_ADDRESS               0x80
-#define TRANSMIT_TASK_STK_SIZE          128
+#define TRANSMIT_TASK_STK_SIZE          512
 OS_STK transmitTaskStk[TRANSMIT_TASK_STK_SIZE];
 
-#define UPLOAD_TASK_STK_SIZE            256
+#define UPLOAD_TASK_STK_SIZE            512
 OS_STK uploadTaskStk[UPLOAD_TASK_STK_SIZE];
 
 PidItem pidList[PID_SIZE] =
@@ -120,8 +120,10 @@ void pal_init(void)
     uint8_t i;
 
     //create mailbox
-    mPal.queue = OSQCreate(mQueue, QUEUE_SIZE);
+    mPal.mailbox = OSQCreate(mQueue, QUEUE_SIZE);
     mPal.mutex = OSMutexCreate(12, &err);
+
+    toyota_get_supported();
 
     transmit_init();
     iwdg_init(IWDG_Prescaler_256, 0xfff);
@@ -135,9 +137,7 @@ void pal_init(void)
     for(i = 0;i < PID_SIZE; i++) {
         updateList[i].updated = FALSE;
     }
-
-    //printk("test for fault code\r\n");
-    //pal_get_fault_code();
+    printf("%s: done\r\n", __func__);
 }
 
 static void transmit_thread(void *pargs)
@@ -148,7 +148,7 @@ static void transmit_thread(void *pargs)
     pargs = pargs;
 
     while(1) {
-        ctrlMsg = (CtrlMsg *)OSQPend(mPal.queue, 0, &err);
+        ctrlMsg = (CtrlMsg *)OSQPend(mPal.mailbox, 0, &err);
         printf("id = %d, cmd_id = %d, value = %d\r\n",
                 ctrlMsg->id, ctrlMsg->cmd_id, ctrlMsg->value);
         pal_do_bcm(ctrlMsg->id, ctrlMsg->value, ctrlMsg->cmd_id);

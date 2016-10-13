@@ -169,6 +169,22 @@ CanTxMsg toyota_continue_package =
     0x30, 0x00, 0x0a, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+CanTxMsg toyota_check_supported =
+{
+    0x7e0, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x02, 0xa8, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+CanTxMsg toyota_test =
+{
+    0x7e0, 0x18db33f1,
+    CAN_ID_STD, CAN_RTR_DATA,
+    8,
+    0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
 PidSupportItem toyotaSupportItems[PID_SIZE] =
 {
     {ENG_DATA_RPM, SUPPORTED},
@@ -674,6 +690,154 @@ uint8_t toyota_engine_on(void)
     return check_engine();
 }
 
+
+void toyota_transfer(CanTxMsg *txMsg, uint8_t *len)
+{
+    uint8_t i, j;
+    int8_t ret;
+    uint8_t valid_len;
+    uint8_t valid_index = 0;
+    uint8_t data_type;
+    uint8_t offset;
+    uint8_t l_bytes = 0;
+    uint8_t l_packages = 0;
+    uint8_t sub_cmd = 0;
+
+    uint16_t rxId;
+
+    CanRxMsg *rxMsg;
+
+    //clear flexcan rx buf
+    flexcan_reset();
+
+    rxId = txMsg->StdId + 0x08;
+    printf("rx = %04x\r\n", rxId);
+    ret = flexcan_ioctl(DIR_BI, txMsg, rxId, 1);
+    if(ret > 0) {
+        rxMsg = flexcan_dump();
+        //check if the receive msg type is needed
+        if(txMsg->Data[0] > 10) {
+            data_type = 0x40 + txMsg->Data[2];
+            sub_cmd = txMsg->Data[3];
+        } else {
+            data_type = 0x40 + txMsg->Data[1];
+            sub_cmd = txMsg->Data[2];
+        }
+        for(i = 0; i < 8; i++) {
+            toyota_rx_buf[i] = rxMsg->Data[i];
+        }
+
+        //find the valid index
+        for(i = 0; i < 8; i++) {
+            if(toyota_rx_buf[i] == data_type) {
+                valid_index = i;
+                break;
+            }
+        }
+
+        if(sub_cmd != toyota_rx_buf[valid_index + 1]) {
+            printf("ERROR: sub_cmd = %02x, valid_index = %d\r\n",
+                    sub_cmd, valid_index);
+        }
+
+        //check if this recv package is a long package
+        if(toyota_rx_buf[0] == 0x10) {
+            l_bytes = toyota_rx_buf[1];
+            l_packages = 0;
+            l_packages = (l_bytes - 6) / 7;
+            if((l_bytes - 6) % 7 > 0) {
+                l_packages += 1;
+            }
+            for(i = 2; i < 8; i++) {
+                toyota_rx_buf[i - 2] = rxMsg->Data[i];
+            }
+            //send continue package
+            ret = flexcan_ioctl(DIR_BI, &toyota_continue_package,
+                    rxId, l_packages);
+            if(ret == l_packages) {
+                for(i = 0;i < ret; i++) {
+                    rxMsg = flexcan_dump();
+                    for(j = 0; j < 7; j++) {
+                        toyota_rx_buf[6 + i * 7 + j] = rxMsg->Data[j + 1];
+                    }
+                }
+            } else {
+                printf("error: ret = %d\r\n", ret);
+            }
+            *len = l_bytes;
+        }
+        //short package
+        else {
+            if(txMsg->Data[0] > 10) {
+                data_type = 0x40 + txMsg->Data[2];
+                sub_cmd = txMsg->Data[3];
+            } else {
+                data_type = 0x40 + txMsg->Data[1];
+                sub_cmd = txMsg->Data[2];
+            }
+            //find the valid index
+            for(i = 0; i < 8; i++) {
+                if(toyota_rx_buf[i] == data_type) {
+                    valid_index = i;
+                    break;
+                }
+            }
+            if(sub_cmd != toyota_rx_buf[valid_index + 1]) {
+                printf("sub_cmd = %02x, valid_index = %d\r\n",
+                        sub_cmd, valid_index);
+            }
+            //shift the valid data to head
+            for(i = 0; i < 8; i++) {
+                toyota_rx_buf[i] = toyota_rx_buf[valid_index + i];
+            }
+            *len = 8;
+        }
+
+        for(i = 0; i < *len; i++) {
+            printf("%02x ", toyota_rx_buf[i]);
+        }
+        printf("\r\n");
+    } else {
+        printf("Error\r\n");
+    }
+
+}
+
+void toyota_get_supported(void)
+{
+    uint8_t ret;
+    uint8_t len;
+    uint8_t i = 0;
+    CanRxMsg *rxMsg;
+
+    toyota_transfer(&toyota_check_supported, &len);
+    printf("%s: len = %d\r\n", __func__, len);
+    ret = flexcan_ioctl(DIR_INPUT, NULL, 0x07e8, 1);
+    if(ret > 0) {
+        rxMsg = flexcan_dump();
+    } else {
+        printf("errpr\r\n");
+    }
+    ret = flexcan_ioctl(DIR_BI, &toyota_continue_package, 0x00, 0);
+    if(ret > 0) {
+        rxMsg = flexcan_dump();
+    }
+    while(1) {
+        ret = flexcan_ioctl(DIR_INPUT, NULL, 0x07e8, 1);
+        if(ret > 0) {
+            rxMsg = flexcan_dump();
+            if(rxMsg->Data[0] == 0x10) {
+                printf("get 0x10\r\n");
+                flexcan_ioctl(DIR_OUTPUT, &toyota_continue_package, 0x00, 0);
+            }
+        } else {
+            printf("get support end!!\r\n");
+            break;
+        }
+    }
+    toyota_transfer(&toyota_test, &len);
+}
+
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
 {
     uint8_t i, j;
@@ -879,7 +1043,7 @@ void toyota_ctrl_findcar(uint8_t state)
 void toyota_clear_fault_code(void)
 {
     uint8_t i;
-    
+
     printf("-> %s\r\n", __func__);
     for(i = 0; i < FAULT_CODE_MAX_SIZE; i++) {
         flexcan_send_frame(&toyota_clear_fault[i]);
@@ -902,8 +1066,8 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
     uint8_t l_packages = 0;
     uint8_t sub_cmd = 0;
     uint16_t rxId;
-		uint8_t hasSubCmd = FALSE;
-		uint8_t shift = 3;
+    uint8_t hasSubCmd = FALSE;
+    uint8_t shift = 3;
 
     CanRxMsg *rxMsg;
 
@@ -911,9 +1075,9 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
     memset(toyota_code_val, 0x00, FAULT_CODE_MAX_SIZE);
 
     rxId = toyota_fault_code[id].StdId + 8;
-		if(toyota_fault_code[id].Data[0] > 0x10) {
-			hasSubCmd = TRUE;
-		}
+    if(toyota_fault_code[id].Data[0] > 0x10) {
+        hasSubCmd = TRUE;
+    }
     //printf("%s: txId = 0x%04x, rxId = 0x%04x\r\n", __func__,
     //        toyota_fault_code[id].StdId, rxId);
     ret = flexcan_ioctl(DIR_BI, &toyota_fault_code[id], rxId, 1);
@@ -949,11 +1113,11 @@ uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len)
         }
         //short package
         else {
-						if(hasSubCmd) {
-							shift = 3;
-						} else {
-							shift = 2;
-						}
+            if(hasSubCmd) {
+                shift = 3;
+            } else {
+                shift = 2;
+            }
             //shift the valid data to head
             for(i = shift; i < 8; i++) {
                 toyota_fault_data[i - shift] = rxMsg->Data[i];

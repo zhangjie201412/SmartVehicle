@@ -12,7 +12,7 @@ CanTxMsg gm_exit_cmd =
     0x241, 0x18db33f1,
     CAN_ID_STD, CAN_RTR_DATA,
     2,
-    0x01, 0x02
+    0x01, 0x20
 };
 
 CanTxMsg gm_lamp_on =

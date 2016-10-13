@@ -1,5 +1,5 @@
 #include "transmit.h"
-#include "sim900.h"
+#include "sim800.h"
 #include "pal.h"
 #include "cJSON.h"
 #include "malloc.h"
@@ -11,6 +11,8 @@
 extern uint8_t *deviceid[17];
 __IO uint8_t heartbeat = 0;
 __IO CtrlMsg ctrlMsg;
+
+uint8_t hb_fail_count = 0;
 
 CtrlItem ctrlTable[CONTROL_END] = {
     {CONTROL_WINDOW, "bcm_fun_window"},
@@ -36,11 +38,9 @@ void transmit_init(void)
 #endif
 #ifdef PROP_HAS_GPRS
     //init for gprs
-    sim900_init();
-    //connect the server
-    sim900_connect();
+    sim800_setup();
     //register callback
-    sim900_register_recv(recv_callback);
+    sim800_register_recv(recv_callback);
     //run heart beat thread
     OSTaskCreate(heartbeat_thread, (void *)0,
             &heartbeatTaskStk[TASK_STK_SIZE_COMMON - 1],
@@ -55,6 +55,8 @@ void transmit_init(void)
     gm_setup();
 #endif
 #endif
+    printf("%s: done\r\n", __func__);
+    hb_fail_count = 0;
 }
 
 uint8_t isConnected(void)
@@ -99,11 +101,14 @@ void recv_callback(uint8_t *buf)
                 if(((heartbeat - 1) * 2 + 1) == heartbeat_rsp) {
                     //printf("heartbeat!\r\n");
                     connected = TRUE;
+                    hb_fail_count = 0;
                     //clear ticks
                     setTicks(0);
                 } else {
                     printf("failed to parse heartbeat\r\n");
-                    go_reboot();
+                    if(hb_fail_count ++ > 5) {
+                        go_reboot();
+                    }
                 }
                 break;
 
@@ -133,7 +138,7 @@ void recv_callback(uint8_t *buf)
                             ctrlMsg.value = 0;
                         }
 #endif
-                        OSQPost(getPalInstance()->queue, &ctrlMsg);
+                        OSQPost(getPalInstance()->mailbox, &ctrlMsg);
                     }
                 }
                 break;
@@ -168,6 +173,7 @@ static void heartbeat_thread(void *parg)
     printf("login!\r\n");
     login();
 #endif
+    printf("%s\r\n", __func__);
     OSTimeDlyHMSM(0, 0, LOGIN_DELAYED_TIME, 0);
     for(;;) {
         OSTimeDlyHMSM(0, 0, HEARTBEAT_INTERVAL, 0);
@@ -201,7 +207,7 @@ void login(void)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    sim900_write((uint8_t *)out, length);
+    sim800_write((uint8_t *)out, length);
     cJSON_Delete(root);
     myfree(out);
 }
@@ -220,7 +226,7 @@ void send_heartbeat(uint8_t count)
     out = cJSON_Print(root);
     length = strlen(out);
     //printf("%s\r\n", out);
-    sim900_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     myfree(out);
@@ -239,7 +245,7 @@ void send_retry(void)
     out = cJSON_Print(root);
     length = strlen(out);
     //printf("%s\r\n", out);
-    sim900_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     myfree(out);
@@ -264,7 +270,7 @@ void control_rsp(uint32_t cmd_id, uint8_t cmd_type)
     out = cJSON_Print(root);
     length = strlen(out);
     printf("%s\r\n", out);
-    sim900_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     myfree(out);
@@ -294,7 +300,7 @@ void upload_item(UpdateItem *item)
     out = cJSON_Print(root);
     length = strlen(out);
     printf("%s\r\n", out);
-    sim900_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     myfree(out);
@@ -328,7 +334,7 @@ void upload_fault_code(FaultCodeValue *value)
     out = cJSON_Print(root);
     length = strlen(out);
     printf("%s\r\n", out);
-    sim900_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     myfree(out);
@@ -349,8 +355,9 @@ void upload_location(uint32_t longitude, uint32_t latitude)
     out = cJSON_Print(root);
     length = strlen(out);
     printf("%s\r\n", out);
-    sim900_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
 
     cJSON_Delete(root);
     myfree(out);
 }
+

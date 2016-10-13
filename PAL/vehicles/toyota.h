@@ -14,5 +14,6 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len);
 uint8_t toyota_engine_on(void);
 void toyota_clear_fault_code(void);
 uint32_t *toyota_check_fault_code(uint8_t id, uint8_t *len);
+void toyota_get_supported(void);
 
 #endif

@@ -58,7 +58,7 @@
 #define SIM900_RX_PRIO                          5
 #define FAKE_TASK_PRIO                          6
 #define TRANSMIT_TASK_PRIO                      7
-#define HEARTBEAT_THREAD_PRIO                   12
+#define HEARTBEAT_THREAD_PRIO                   13
 #define UPLOAD_TASK_PRIO                        8
 
 #define TASK_STK_SIZE_COMMON        128
