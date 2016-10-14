@@ -123,8 +123,6 @@ void pal_init(void)
     mPal.mailbox = OSQCreate(mQueue, QUEUE_SIZE);
     mPal.mutex = OSMutexCreate(12, &err);
 
-    toyota_get_supported();
-
     transmit_init();
     iwdg_init(IWDG_Prescaler_256, 0xfff);
     OSTaskCreate(transmit_thread, (void *)0,

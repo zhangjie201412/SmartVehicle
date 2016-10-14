@@ -661,7 +661,7 @@ __IO uint32_t toyota_code_val[FAULT_CODE_MAX_SIZE];
 __IO uint8_t toyota_fault_data[100];
 
 ToyotaSupportList mToyotaSupportList;
-uint8_t toyota_support_buffer[512];
+uint8_t toyota_support_buffer[1280];
 
 void toyota_keepalive(void)
 {
@@ -697,15 +697,19 @@ void toyota_setup(void)
         mToyotaSupportList.items[i].sub_id = 0;
     }
 
-    for(i = 0; i < 512; i++) {
-        toyota_support_buffer[i] = 0x00;
+    for(i = 0; i < 1280; i++) {
+        toyota_support_buffer[i] = 0x11;
     }
 
 }
 
 uint8_t toyota_engine_on(void)
 {
-    return check_engine();
+    uint8_t ret = check_engine();
+    if(mToyotaSupportList.support_done == false) {
+        toyota_get_supported();
+    }
+    return ret;
 }
 
 
@@ -861,6 +865,7 @@ void toyota_get_supported(void)
                         rxMsg = flexcan_dump();
                         first_byte = rxMsg->Data[0];
                         if(first_byte == 0x10) {
+                            printf("get 0x10\r\n");
                             for(i = 4; i < 8; i++) {
                                 toyota_support_buffer[index ++] = rxMsg->Data[i];
                             }
@@ -890,25 +895,36 @@ void toyota_get_supported(void)
 
 void toyota_map_support_list(void)
 {
-    uint8_t i, j;
+    uint16_t i, j;
     uint8_t len;
     uint16_t index = 0;
 
     printf("%s: start\r\n", __func__);
+
+    for(i = 0; i < 300; i++) {
+        printf("%02x ", toyota_support_buffer[i]);
+    }
+    printf("\r\n");
     mToyotaSupportList.support_done = TRUE;
     for(i = 0; i < SUPPORT_MAX_ITEMS; i++) {
         mToyotaSupportList.items[i].sub_id = toyota_support_buffer[index++];
         len = toyota_support_buffer[index++];
+        //printf("id = %02x\r\n", mToyotaSupportList.items[i].sub_id);
+        //printf("len = %d\r\n", len);
         mToyotaSupportList.items[i].len = len;
         if(len > 0) {
             for(j = 0; j < len; j++) {
                 mToyotaSupportList.items[i].support_raw_bytes[j] = toyota_support_buffer[index ++];
+            }
+            while(toyota_support_buffer[index] == 0x00) {
+                index ++;
             }
         } else {
             break;
         }
     }
     printf("%s: done\r\n", __func__);
+#if 0
     for(i = 0; i < SUPPORT_MAX_ITEMS; i++) {
         len = mToyotaSupportList.items[i].len;
         if(len == 0)
@@ -918,46 +934,10 @@ void toyota_map_support_list(void)
         for(j = 0; j < len; j++) {
             printf("%02x ", mToyotaSupportList.items[i].support_raw_bytes[j]);
         }
-        printf("+++++++++++++++++\r\n");
+        printf("\r\n+++++++++++++++++\r\n");
     }
-}
-
-#if 0
-void toyota_get_supported(void)
-{
-    uint8_t ret;
-    uint8_t len;
-    uint8_t i = 0;
-    CanRxMsg *rxMsg;
-
-    toyota_transfer(&toyota_check_supported, &len);
-    printf("%s: len = %d\r\n", __func__, len);
-    ret = flexcan_ioctl(DIR_INPUT, NULL, 0x07e8, 1);
-    if(ret > 0) {
-        rxMsg = flexcan_dump();
-    } else {
-        printf("errpr\r\n");
-    }
-    ret = flexcan_ioctl(DIR_BI, &toyota_continue_package, 0x00, 0);
-    if(ret > 0) {
-        rxMsg = flexcan_dump();
-    }
-    while(1) {
-        ret = flexcan_ioctl(DIR_INPUT, NULL, 0x07e8, 1);
-        if(ret > 0) {
-            rxMsg = flexcan_dump();
-            if(rxMsg->Data[0] == 0x10) {
-                printf("get 0x10\r\n");
-                flexcan_ioctl(DIR_OUTPUT, &toyota_continue_package, 0x00, 0);
-            }
-        } else {
-            printf("get support end!!\r\n");
-            break;
-        }
-    }
-    toyota_transfer(&toyota_test, &len);
-}
 #endif
+}
 
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
 {

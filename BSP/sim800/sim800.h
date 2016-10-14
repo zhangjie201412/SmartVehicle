@@ -22,6 +22,7 @@ typedef void(*RecvFunc)(uint8_t *buf);
 
 enum StatusType {
     STATE_UNINITED,
+    STATE_POWERUP,
     STATE_INITED,
     STATE_CONNECTING,
     STATE_CONNECTED,

@@ -5,13 +5,14 @@
 #include "app.h"
 #include "ringbuffer.h"
 #include "cJSON.h"
+#include "config.h"
 
 #ifdef SERVER_IS_K
-#define VU_SERV_ADDR   "139.224.17.163"
-#define VU_SERV_PORT   8880
+#define SERV_ADDR   "139.224.17.163"
+#define SERV_PORT   8880
 #elif defined SERVER_IS_VEHICLE_UNION
-#define K_SERV_ADDR   "139.196.153.24"
-#define K_SERV_PORT   9999
+#define SERV_ADDR   "139.196.153.24"
+#define SERV_PORT   9999
 #endif
 
 #define SIM800_CONNECT_RETRY_TIMES  8
@@ -93,7 +94,14 @@ void sim800_setup(void)
                 sim800_powerup();
                 //wait for module initialization
                 sim800_delay(10000);
-                mState = STATE_INITED;
+                mState = STATE_POWERUP;
+                if(sim800_send_cmd("AT\r\n", "AT") == TRUE) {
+                    mState = STATE_INITED;
+                    printf("powerup done!\r\n");
+                } else {
+                    mState = STATE_UNINITED;
+                    printf("powerup failed!\r\n");
+                }
                 break;
             case STATE_INITED:
                 printf("%s: STATE_INITED\r\n", __func__);
@@ -106,7 +114,7 @@ void sim800_setup(void)
                 break;
             case STATE_CONNECTING:
                 printf("%s: STATE_CONNECTING\r\n", __func__);
-                ret = sim800_connect("139.196.153,24", 9999);
+                ret = sim800_connect(SERV_ADDR, SERV_PORT);
                 if(ret == TRUE) {
                     //connect done and exit the loop
                     mState = STATE_CONNECTED;
@@ -205,6 +213,7 @@ void SIM800_USART_IRQHandler(void)
                 break;
             case STATE_INITED:
                 break;
+            case STATE_POWERUP:
             case STATE_CONNECTING:
             case STATE_SENDING:
                 sim800_lock();

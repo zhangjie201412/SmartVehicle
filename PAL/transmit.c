@@ -5,6 +5,7 @@
 #include "malloc.h"
 #include "app.h"
 #include "gps.h"
+#include "config.h"
 
 #define HEARTBEAT_INTERVAL 10
 

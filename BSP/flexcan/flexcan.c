@@ -11,6 +11,8 @@ static uint16_t filter_id = 0x00;
 OS_EVENT *lock;
 OS_EVENT *mailbox;
 
+void *mFlexcanQueue[20];
+
 void flexcan_nvic_init(void)
 {
 	NVIC_InitTypeDef  NVIC_InitStructure;
@@ -52,7 +54,8 @@ void flexcan_init(u8 velocity)
     w_off = 0;
     r_off = 0;
     lock = OSMutexCreate(1, &err);
-    mailbox = OSMboxCreate((void *)0);
+    //mailbox = OSMboxCreate((void *)0);
+    mailbox = OSQCreate(mFlexcanQueue, 20);
 }
 
 void flexcan_gpio_init(void)
@@ -159,7 +162,7 @@ int8_t flexcan_ioctl(uint8_t dir, CanTxMsg *txMsg, uint16_t rxId, uint8_t rxCoun
 
     if(dir & DIR_INPUT) {
         for(i = 0; i < rxCount; /*i++*/) {
-            rxMsg = (CanRxMsg *)OSMboxPend(mailbox,
+            rxMsg = (CanRxMsg *)OSQPend(mailbox,
                     FLEXCAN_TIMEOUT * OS_TICKS_PER_SEC, &err);
             if(err != OS_ERR_TIMEOUT) {
                 OSMutexPend(lock, 0, &err);
@@ -248,9 +251,18 @@ void flexcan_reset(void)
 
 void flexcan_rx_callack(void)
 {
+    uint8_t i;
+
     CAN_Receive(CAN1, CAN_FIFO0, &m_rxMsg);
+#if 0
+    printf("===>");
+    for(i = 0; i < 8; i++) {
+        printf("%02x ", m_rxMsg.Data[i]);
+    }
+    printf("\r\n");
+#endif
     if(m_rxMsg.StdId == filter_id) {
-        OSMboxPost(mailbox, &m_rxMsg);
+        OSQPost(mailbox, &m_rxMsg);
     } else {
         //drop
         //TODO:???
