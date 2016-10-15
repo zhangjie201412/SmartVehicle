@@ -116,6 +116,7 @@ void sim800_setup(void)
                 }
                 //check signal
                 signal = sim800_get_signal();
+                printf("signal = %d\r\n", signal);
                 if(signal < 5) {
                     //if signal too low power down the gprs module
                     //wait 10 min then re power the module
