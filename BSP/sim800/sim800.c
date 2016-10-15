@@ -40,7 +40,7 @@ const char *CONFIG_TABLES[CONFIG_SIZE][2] =
     {"AT+CIICR\r\n", "\r\nOK"},
 };
 
-#define SIM800_CMD_SIZE     9
+#define SIM800_CMD_SIZE     8
 sim800_cmd mCmds[SIM800_CMD_SIZE] =
 {
     {"ATE0\r\n", 100},
@@ -51,7 +51,6 @@ sim800_cmd mCmds[SIM800_CMD_SIZE] =
     {"AT+CIICR\r\n", 3000},
     {"AT+CIFSR\r\n", 300},
     {"AT+CGATT=1\r\n", 300},
-    {"AT+CSQ\r\n", 300},
 };
 
 void sim800_powerup(void)
@@ -72,6 +71,11 @@ void sim800_powerup(void)
     GPIO_ResetBits(GPIOB, GPIO_Pin_0);
 }
 
+void sim800_powerdown(void)
+{
+    sim800_powerup();
+}
+
 void sim800_setup(void)
 {
     bool connect_done = FALSE;
@@ -83,6 +87,7 @@ void sim800_setup(void)
     uint8_t recv;
     bool ret;
     uint8_t i;
+    uint8_t signal;
     printf("%s start\r\n", __func__);
     sim800_init();
 
@@ -108,6 +113,16 @@ void sim800_setup(void)
                 for(i = 0; i < SIM800_CMD_SIZE; i++) {
                     sim800_write(mCmds[i].cmd, strlen(mCmds[i].cmd));
                     sim800_delay(mCmds[i].delay);
+                }
+                //check signal
+                signal = sim800_get_signal();
+                if(signal < 5) {
+                    //if signal too low power down the gprs module
+                    //wait 10 min then re power the module
+                    sim800_powerdown();
+                    OSTimeDlyHMSM(0, 0, 10, 0);
+                    mState = STATE_UNINITED;
+                    break;
                 }
                 rb_clear(&mRb);
                 mState = STATE_CONNECTING;
@@ -213,6 +228,15 @@ void SIM800_USART_IRQHandler(void)
                 break;
             case STATE_INITED:
                 break;
+            case STATE_SIGNAL:
+                sim800_lock();
+                rb_put(&mRb, &data, 1);
+                if(buf[2] == 'O' &&
+                        buf[3] == 'K') {
+                    sim800_up();
+                }
+                sim800_unlock();
+                break;
             case STATE_POWERUP:
             case STATE_CONNECTING:
             case STATE_SENDING:
@@ -279,7 +303,7 @@ bool sim800_send_cmd(const char *cmd, const char *rsp)
     if(ret == TRUE) {
         while(!rb_is_empty(&mRb)) {
             rb_get(&mRb, &recv, 1);
-            //printf("recv = %02x\r\n", recv);
+//            printf("recv = %02x %c\r\n", recv, recv);
             rx_buf[index ++] = recv;
         }
         for(i = 0; i < rspLen; i++) {
@@ -331,6 +355,49 @@ bool sim800_connect(const char *host, uint32_t port)
     } else {
         return FALSE;
     }
+}
+
+uint8_t sim800_get_signal(void)
+{
+    uint8_t signal;
+    uint8_t index = 0, i;
+    uint8_t recv;
+    uint8_t rx_buf[20];
+    bool ret;
+    uint8_t *s, *p;
+    uint8_t buf[4];
+
+    sim800_lock();
+    mState = STATE_SIGNAL;
+    rb_clear(&mRb);
+    sim800_write("AT+CSQ\r\n", 8);
+    ret = sim800_down(4);
+    if(ret == TRUE) {
+        while(!rb_is_empty(&mRb)) {
+            rb_get(&mRb, &recv, 1);
+            rx_buf[index ++] = recv;
+        }
+        if(NULL != (s = strstr(rx_buf, "+CSQ:"))) {
+            s = strstr((char *)(s), " ");
+            s =s + 1;
+            p = strstr((char *)(s), ",");
+            if(NULL != s) {
+                i = 0;
+                while(s < p) {
+                    buf[i++] = *(s++);
+                }
+                buf[i] = '\0';
+            }
+            signal = atoi(buf);
+        }
+        sim800_unlock();
+    } else {
+        sim800_unlock();
+        signal = 0;
+    }
+    mState = STATE_IDLE;
+//    printf("signal = %d\r\n", signal);
+    return signal;
 }
 
 bool sim800_busy = FALSE;

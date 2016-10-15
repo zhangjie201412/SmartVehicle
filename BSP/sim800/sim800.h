@@ -24,9 +24,11 @@ enum StatusType {
     STATE_UNINITED,
     STATE_POWERUP,
     STATE_INITED,
+    STATE_SIGNAL,
     STATE_CONNECTING,
     STATE_CONNECTED,
     STATE_IDLE,
+    STATE_CMDING,
     STATE_SENDING,
     STATE_CMD_BUSY,
     STATE_DATA_BUSY,
@@ -35,6 +37,7 @@ enum StatusType {
 //public:
 void sim800_setup(void);
 void sim800_powerup(void);
+void sim800_powerdown(void);
 
 //private:
 bool sim800_send_cmd(const char *cmd, const char *rsp);
@@ -48,5 +51,6 @@ void sim800_unlock(void);
 bool sim800_down(uint16_t sec);
 void sim800_up(void);
 void sim800_register_recv(RecvFunc func);
+uint8_t sim800_get_signal(void);
 
 #endif

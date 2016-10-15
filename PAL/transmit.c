@@ -7,7 +7,7 @@
 #include "gps.h"
 #include "config.h"
 
-#define HEARTBEAT_INTERVAL 10
+#define HEARTBEAT_INTERVAL 20
 
 extern uint8_t *deviceid[17];
 __IO uint8_t heartbeat = 0;

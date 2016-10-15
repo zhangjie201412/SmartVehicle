@@ -175,7 +175,6 @@ static void task_process_atcmd(void *parg)
     flexcan_init(CAN_500K);
     flexcan_filter(0x641, 0x641, 0x6ff, 0x6ff);
 
-//    sim800_setup();
     pal_init();
     while(1) {
         OSTimeDlyHMSM(0, 0, 5, 0);
