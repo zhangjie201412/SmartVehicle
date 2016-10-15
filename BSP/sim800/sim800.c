@@ -351,7 +351,7 @@ void sim800_send(uint8_t *buf, uint32_t len)
     uint32_t delay = 1000000;
 
     //sim800_wait_busy();
-    printf("%s:++\r\n", __func__);
+//    printf("%s:++\r\n", __func__);
     sim800_busy = TRUE;
     OSMutexPend(mSendMutex, 0, &err);
 
@@ -367,7 +367,7 @@ void sim800_send(uint8_t *buf, uint32_t len)
 
     OSMutexPost(mSendMutex);
     sim800_busy = FALSE;
-    printf("%s:--\r\n", __func__);
+//    printf("%s:--\r\n", __func__);
 }
 
 

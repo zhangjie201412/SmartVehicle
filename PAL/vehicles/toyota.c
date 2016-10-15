@@ -280,7 +280,7 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         ENG_DATA_ERT, 0X7e0, 8,
         {0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7e8, 3, 1,
+        0x7e8, 0x0d, 1,
     },
     //LOAD
     {
@@ -354,7 +354,7 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         ENG_DATA_HO2S2, 0X7e0, 8,
         {0x02, 0x21, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7e8, 18, 1,
+        0x7e8, 0x18, 1,
     },
     //MAP
     {
@@ -394,7 +394,7 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         ENG_DATA_MAF, 0X7e0, 8,
         {0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7e8, 5, 1,
+        0x7e8, 3, 1,
     },
     //OILLIFE
     {
@@ -404,7 +404,7 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         ENG_DATA_OILTEMP, 0X7e0, 8,
         {0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7e8, 31, 1,
+        0x7e8, 0x31, 1,
     },
     //FUEL
     {
@@ -424,9 +424,9 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     },
     //AT_DATA_OILTEMP
     {
-        AT_DATA_OILTEMP, 0X7b0, 8,
+        AT_DATA_OILTEMP, 0X7c0, 8,
         {0x02, 0x21, 0x82, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7b8, 2, 2,
+        0x7c8, 2, 2,
     },
     //ABS_DATA_OILLEVEL
     {
@@ -454,25 +454,25 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         BCM_DATA_DDA, 0X750, 8,
         {0x40, 0x02, 0x21, 0xA2, 0x00, 0x00, 0x00, 0x00},
-        0x758, 0x02, 1,
+        0x758, 0x00, 1,
     },
     //BCM_DATA_PDA
     {
         BCM_DATA_PDA, 0X750, 8,
         {0x40, 0x02, 0x21, 0xA3, 0x00, 0x00, 0x00, 0x00},
-        0x758, 0x02, 1,
+        0x758, 0x00, 1,
     },
     //BCM_DATA_RRDA
     {
         BCM_DATA_RRDA, 0X750, 8,
         {0x40, 0x02, 0x21, 0xA3, 0x00, 0x00, 0x00, 0x00},
-        0x758, 0x04, 1,
+        0x758, 0x02, 1,
     },
     //BCM_DATA_LRDA
     {
         BCM_DATA_LRDA, 0X750, 8,
         {0x40, 0x02, 0x21, 0xA3, 0x00, 0x00, 0x00, 0x00},
-        0x758, 0x05, 1,
+        0x758, 0x03, 1,
     },
     //BCM_DATA_SUNROOF
     {
@@ -490,7 +490,7 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         BCM_DATA_HIGHBEAM, 0X750, 8,
         {0x70, 0x02, 0x21, 0x01, 0x00, 0x00, 0x00, 0x00},
-        0x758, 0x03, 1,
+        0x758, 0x01, 1,
     },
     //BCM_DATA_HAZARD
     {
@@ -526,7 +526,7 @@ StdDataStream toyotaStdDs[PID_SIZE] =
     {
         BCM_DATA_ODO, 0X7e0, 8,
         {0x02, 0x21, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00},
-        0x7e8, 0x02, 3,
+        0x7e8, 0x00, 3,
     },
 };
 
@@ -671,7 +671,7 @@ void toyota_keepalive(void)
 
 void toyota_setup(void)
 {
-    uint8_t i;
+    uint16_t i;
     Pal *pal;
 
     printf("-> %s\r\n", __func__);
@@ -696,17 +696,17 @@ void toyota_setup(void)
     for(i = 0; i < SUPPORT_MAX_ITEMS; i++) {
         mToyotaSupportList.items[i].sub_id = 0;
     }
-
     for(i = 0; i < 1280; i++) {
-        toyota_support_buffer[i] = 0x11;
+        toyota_support_buffer[i] = 0x00;
     }
+    printf("-> %s done\r\n", __func__);
 
 }
 
 uint8_t toyota_engine_on(void)
 {
     uint8_t ret = check_engine();
-    if(mToyotaSupportList.support_done == false) {
+    if(mToyotaSupportList.support_done == FALSE) {
         toyota_get_supported();
     }
     return ret;
@@ -833,7 +833,8 @@ void toyota_get_supported(void)
     CanRxMsg *rxMsg;
     uint16_t index = 0;
 
-    ret = flexcan_ioctl(DIR_BI, &toyota_check_supported, 0x7e8, 1);
+    ret = flexcan_ioctl(DIR_BI, &toyota_check_supported,
+            toyota_check_supported.StdId + 8, 1);
     if(ret > 0) {
         rxMsg = flexcan_dump();
         //save bytes
@@ -847,7 +848,8 @@ void toyota_get_supported(void)
     }
 
     while(1) {
-        ret = flexcan_ioctl(DIR_BI, &toyota_continue_package, 0x7e8, 1);
+        ret = flexcan_ioctl(DIR_BI, &toyota_continue_package,
+                toyota_continue_package.StdId + 8, 1);
         if(ret > 0) {
             rxMsg = flexcan_dump();
             first_byte = rxMsg->Data[0];
@@ -860,12 +862,12 @@ void toyota_get_supported(void)
                 }
 
                 while(1) {
-                    ret = flexcan_ioctl(DIR_INPUT, NULL, 0x7e8, 1);
+                    ret = flexcan_ioctl(DIR_INPUT, NULL,
+                            toyota_check_supported.StdId + 8, 1);
                     if(ret > 0) {
                         rxMsg = flexcan_dump();
                         first_byte = rxMsg->Data[0];
                         if(first_byte == 0x10) {
-                            printf("get 0x10\r\n");
                             for(i = 4; i < 8; i++) {
                                 toyota_support_buffer[index ++] = rxMsg->Data[i];
                             }
@@ -939,6 +941,24 @@ void toyota_map_support_list(void)
 #endif
 }
 
+uint8_t get_real_offset(uint8_t id, uint8_t offset)
+{
+    uint8_t i, j;
+    uint8_t off = 0;
+
+    for(i = 0; i < SUPPORT_MAX_ITEMS; i++) {
+        if(id == mToyotaSupportList.items[i].sub_id) {
+            for(j = 0; j < offset; j++) {
+                if(mToyotaSupportList.items[i].support_raw_bytes[j] == 0x00)
+                    off ++;
+            }
+            break;
+        }
+    }
+
+    return off;
+}
+
 uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
 {
     uint8_t i, j;
@@ -966,6 +986,15 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
     flexcan_reset();
     valid_len = toyotaStdDs[pid].valid_len;
     offset = toyotaStdDs[pid].offset;
+    printf("offset = %d\r\n", offset);
+    //get real offset
+    if(mToyotaSupportList.support_done == TRUE) {
+        if(toyotaStdDs[pid].rxId == 0x7e8) {
+            offset = offset - get_real_offset(toyotaStdDs[pid].data[2], offset);
+            printf("real offset = %d\r\n", offset);
+        }
+    }
+
     txMsg.StdId = toyotaStdDs[pid].txId;
     txMsg.IDE = CAN_ID_STD;
     txMsg.DLC = toyotaStdDs[pid].len;
@@ -990,6 +1019,7 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
         //find the valid index
         for(i = 0; i < 8; i++) {
             if(toyota_rx_buf[i] == data_type) {
+                //skip 61 xx
                 valid_index = i;
                 break;
             }
@@ -1038,6 +1068,7 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
             //find the valid index
             for(i = 0; i < 8; i++) {
                 if(toyota_rx_buf[i] == data_type) {
+                    //skip 61 xx
                     valid_index = i;
                     break;
                 }
@@ -1053,7 +1084,12 @@ uint8_t* toyota_data_stream(uint8_t pid, uint8_t *len)
             }
         }
         *len = valid_len;
-        return toyota_rx_buf + offset;
+        printf("offset = %d, len = %d\r\n", offset, *len);
+        for(i = 0; i < 40; i++) {
+            printf("%02x ", toyota_rx_buf[i]);
+        }
+        printf("\r\n");
+        return toyota_rx_buf + offset + 2;
     } else {
         return NULL;
     }

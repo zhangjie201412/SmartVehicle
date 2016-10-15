@@ -37,6 +37,13 @@ void transmit_init(void)
     gps_setup();
 #endif
 #endif
+#ifdef VEHICLE_TYPE_FAKE
+    fake_setup();
+#elif defined VEHICLE_TYPE_TOYOTA
+    toyota_setup();
+#elif defined VEHICLE_TYPE_GM
+    gm_setup();
+#endif
 #ifdef PROP_HAS_GPRS
     //init for gprs
     sim800_setup();
@@ -48,13 +55,6 @@ void transmit_init(void)
             HEARTBEAT_THREAD_PRIO);
     heartbeat = 0;
     connected = FALSE;
-#ifdef VEHICLE_TYPE_FAKE
-    fake_setup();
-#elif defined VEHICLE_TYPE_TOYOTA
-    toyota_setup();
-#elif defined VEHICLE_TYPE_GM
-    gm_setup();
-#endif
 #endif
     printf("%s: done\r\n", __func__);
     hb_fail_count = 0;
