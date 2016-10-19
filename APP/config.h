@@ -5,11 +5,11 @@
  * To define the server receive supported modules
  * */
 
-#define SERVER_IS_VEHICLE_UNION
-#define VEHICLE_TYPE_TOYOTA
+//#define SERVER_IS_VEHICLE_UNION
+//#define VEHICLE_TYPE_TOYOTA
 //#define VEHICLE_TYPE_GM
 //#define VEHICLE_TYPE_FAKE
-//#define SERVER_IS_K
+#define SERVER_IS_K
 
 #define PROP_HAS_GPS            1
 #define PROP_HAS_GPRS           1

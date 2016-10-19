@@ -115,6 +115,7 @@ void sim800_setup(void)
                     sim800_delay(mCmds[i].delay);
                 }
                 //check signal
+#if 0
                 signal = sim800_get_signal();
                 printf("signal = %d\r\n", signal);
                 if(signal < 5) {
@@ -125,6 +126,7 @@ void sim800_setup(void)
                     mState = STATE_UNINITED;
                     break;
                 }
+#endif
                 rb_clear(&mRb);
                 mState = STATE_CONNECTING;
                 break;
@@ -418,6 +420,7 @@ void sim800_send(uint8_t *buf, uint32_t len)
     INT8U err;
     uint32_t delay = 1000000;
 
+    printf("%s: %s\r\n", __func__, buf);
     //sim800_wait_busy();
 //    printf("%s:++\r\n", __func__);
     sim800_busy = TRUE;
