@@ -69,7 +69,6 @@ void recv_callback(uint8_t *buf)
 {
     //1. parse buffer
     //2. send queue cmd to pal layer
-    //    printf("-> %s: %s\r\n", __func__, buf);
     cJSON *json, *item;
     char *tmp;
     uint8_t i = 0;
@@ -78,6 +77,7 @@ void recv_callback(uint8_t *buf)
     int ctrl_val;
     uint8_t heartbeat_rsp;
 
+    printf("-> %s: %s\r\n", __func__, buf);
     json = cJSON_Parse((const char *)buf);
     if(!json) {
         printf("\r\n[%s]\r\n", cJSON_GetErrorPtr());
@@ -208,7 +208,7 @@ void login(void)
 
     out = cJSON_Print(root);
     length = strlen(out);
-    sim800_write((uint8_t *)out, length);
+    sim800_send((uint8_t *)out, length);
     cJSON_Delete(root);
     myfree(out);
 }
