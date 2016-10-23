@@ -336,6 +336,7 @@ bool sim800_connect(const char *host, uint32_t port)
     memset(buf, 0x00, 128);
     snprintf(buf, 128, "AT+CIPSTART=\"TCP\",\"%s\",\"%d\"\r\n", host, port);
     printf("%s: %s\r\n", __func__, buf);
+    sim800_lock();
     ret = sim800_send_cmd(buf, "\r\nOK");
     if(ret) {
         ret = sim800_down(8);
