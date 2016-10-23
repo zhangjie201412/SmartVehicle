@@ -423,7 +423,7 @@ void sim800_send(uint8_t *buf, uint32_t len)
 
     printf("%s: %s\r\n", __func__, buf);
     //sim800_wait_busy();
-//    printf("%s:++\r\n", __func__);
+    printf("%s:%s\r\n", __func__, buf);
     sim800_busy = TRUE;
     OSMutexPend(mSendMutex, 0, &err);
 
